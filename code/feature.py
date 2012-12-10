@@ -6,17 +6,18 @@ sentence_features = ImmutableSet(["pos"])
 token_features = ImmutableSet(["word"])
 enabled_features = sentence_features | token_features
 
-def enable_features():
-	pass
+def enable_features(f):
+	global enabled_features = enabled_features | Set(f)
 
-def disable_features():
-	pass
+def disable_features(f):
+	f = Set(f)
+	global enabled_features = enabled_features - Set(f)
 
 def enable_all_features():
-	pass
+	global enabled_features = sentence_features | token_features
 
 def disable_all_features():
-	pass
+	global enabled_features = Set([])
 
 def features_for_sentence(sentence):
 	features = []
