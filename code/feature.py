@@ -3,7 +3,7 @@ from sets import Set
 from sets import ImmutableSet
 
 sentence_features = ImmutableSet(["pos"])
-token_features = ImmutableSet(["word"])
+token_features = ImmutableSet(["word", "length"])
 enabled_features = sentence_features | token_features
 
 def enable_features(f):
@@ -23,27 +23,31 @@ def disable_all_features():
 	enabled_features = Set([])
 
 def features_for_sentence(sentence):
-	features = []
+	features_list = []
 
-	for token in sentence:
-		features.append(features_for_token(token))
+	for word in sentence:
+		features_list.append(features_for_word(word))
 
-	# Note - some features will be index based, and others will be shared by all tokens in the sentence
 	for feature in sentence_features:
-		if features not in enabled_features:
+		if feature not in enabled_features:
 			continue
 
 		if feature == "pos":
 			pass
+	
+	return features_list
 
-def features_for_token(token):
+def features_for_word(word):
+	features = {}
+
 	for feature in token_features:
 		if feature not in enabled_features:
 			continue
 
 		if feature == "word":
-			pass
+			features[(feature, word)] = 1
 
-class Feature:
-	def __init__(self, token):
-		self.token = token
+		if feature == "length":
+			features[(feature, None)] = len(word)
+
+	return features
