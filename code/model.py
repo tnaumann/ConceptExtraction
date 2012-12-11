@@ -1,6 +1,9 @@
 from __future__ import with_statement
 
+import os
 import pickle
+import subprocess
+
 from sets import Set
 from sets import ImmutableSet
 
@@ -27,6 +30,9 @@ class Model:
 		self.enabled_features = Model.sentence_features | Model.word_features
 	
 	def train(self, data, labels):
+		svm_filename = self.filename + ".svm"
+		crf_filename = self.filename + ".crf"
+
 		rows = []
 		for sentence in data:
 			rows.append(self.features_for_sentence(sentence))
@@ -37,9 +43,8 @@ class Model:
 					if feature not in self.vocab:
 						self.vocab[feature] = len(self.vocab) + 1
 
-		with open(self.filename + ".svm", "w") as svm:
-			with open(self.filename + ".crf", "w") as crf:
-
+		with open(svm_filename, "w") as svm:
+			with open(crf_filename, "w") as crf:
 				for sentence_index in range(len(rows)):
 					sentence = rows[sentence_index]
 					sentence_labels = labels[sentence_index]
@@ -73,6 +78,16 @@ class Model:
 
 		with open(self.filename, "a") as model:
 			pickle.dump(self, model)
+
+		libsvm_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "lib", "libsvm")
+
+		svm_train = os.path.join(libsvm_path, "svm-train")
+		svm_command = [svm_train, "-s 1", "-t 0", svm_filename, svm_filename + ".trained"]
+
+		output, error = subprocess.Popen(svm_command, stdout = subprocess.PIPE, stderr= subprocess.PIPE).communicate()
+		
+		print output
+		print error
 		
 	def predict(self, data):
 		pass

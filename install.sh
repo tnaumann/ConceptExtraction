@@ -9,5 +9,7 @@ wget "http://www.csie.ntu.edu.tw/~cjlin/cgi-bin/libsvm.cgi?+http://www.csie.ntu.
 unzip "libsvm-3.14.zip"
 
 ln -s "libsvm-3.14" "libsvm"
-
 rm "libsvm-3.14.zip"
+
+cd "libsvm"
+make
