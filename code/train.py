@@ -20,9 +20,10 @@ def main():
 	
 	# Get data and labels from files
 	data = []
+	labels = []
 	for txt, con in files:
-		data += (read_txt(txt), read_con(con, txt))
-	data, labels = zip(*data)	#unzip
+		data += read_txt(txt)
+		labels += read_con(con, txt))
 	
 	# Train a model on the data and labels
 	model = Model()
