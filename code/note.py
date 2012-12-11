@@ -26,3 +26,37 @@ class Note:
 	def __iter__(self):
 		return iter(self.sents)
 		
+def read_txt(txt):
+	note = []
+	with open(txt) as f:
+		for line in f:
+			note.append([w for w in line.split()])
+	return note		
+	
+def read_con(con, txt):
+	label = [['none'] * len(line) for line in txt]
+	with open(con) as f:
+		for line in f:
+			c, t = line.split('||')
+			t = t[3:-2]
+			c = c.split()
+			start = c[-2].split(':')
+			end = c[-1].split(':')
+			assert "concept spans one line", start[0] == end[0]
+			l = int(start[0]) - 1
+			start = int(start[1])
+			end = int(start[0])
+			
+			for i in range(start, end + 1):
+				label[l][i] = t
+	return label
+		
+def write_con(con, data, labels):
+	with open(con) as f:
+		for i, tmp in enumerate(zip(data, labels)):
+			datum, label = tmp
+			for j, tmp in enumerate(zip(datum, label)):
+				datum, label = tmp
+				if label != 'none':
+					idx = "%d:%d" % (i + 1, j)
+					print >>f, "c=\"%s\" %s %s||t=\"%s\"" % (datum, idx, idx, label)

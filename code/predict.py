@@ -11,7 +11,10 @@ def main():
 	
 	# Load a model and make a prediction for each file
 	model = Model()
-	model.predict()
+	for txt in files:
+		data = read_txt(txt)
+		labels = model.predict(data)
+		write_labels(txt[:-3] + 'con', data, labels)
 
 if __name__ == '__main__':
 	main()
