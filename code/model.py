@@ -1,5 +1,6 @@
 from __future__ import with_statement
 
+import pickle
 from sets import Set
 from sets import ImmutableSet
 
@@ -70,6 +71,8 @@ class Model:
 
 					crf.write("\n")
 
+		with open(self.filename, "a") as model:
+			pickle.dump(self, model)
 		
 	def predict(self, data):
 		pass
