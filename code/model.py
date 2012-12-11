@@ -3,6 +3,7 @@ from __future__ import with_statement
 import os
 import pickle
 import subprocess
+import sys
 
 from sets import Set
 from sets import ImmutableSet
@@ -29,7 +30,11 @@ class Model:
 
 	libsvm_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "lib", "libsvm")
 	svm_train = os.path.join(libsvm_path, "svm-train")
+	if sys.platform == 'win32':
+		svm_train = os.path.join(libsvm_path, "windows", "svm-train")
 	svm_predict = os.path.join(libsvm_path, "svm-predict")
+	if sys.platform == 'win32':
+		svm_predict = os.path.join(libsvm_path, "windows", "svm-predict")
 
 	def __init__(self, filename='awesome.model', type=Type.BOTH):
 		self.filename = filename

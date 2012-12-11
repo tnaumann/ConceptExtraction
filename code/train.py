@@ -22,8 +22,9 @@ def main():
 	data = []
 	labels = []
 	for txt, con in files:
-		data += read_txt(txt)
-		labels += read_con(con, txt))
+		datum = read_txt(txt)
+		data += datum
+		labels += read_con(con, datum)
 	
 	# Train a model on the data and labels
 	model = Model()

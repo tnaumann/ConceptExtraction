@@ -45,14 +45,14 @@ def read_con(con, txt):
 			assert "concept spans one line", start[0] == end[0]
 			l = int(start[0]) - 1
 			start = int(start[1])
-			end = int(start[0])
+			end = int(end[1])
 			
 			for i in range(start, end + 1):
 				label[l][i] = t
 	return label
 		
 def write_con(con, data, labels):
-	with open(con) as f:
+	with open(con, 'w') as f:
 		for i, tmp in enumerate(zip(data, labels)):
 			datum, label = tmp
 			for j, tmp in enumerate(zip(datum, label)):
