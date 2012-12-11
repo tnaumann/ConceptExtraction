@@ -23,9 +23,16 @@ class Model:
 		"test":3
 	}
 
+	reverse_labels = {}
+	for k, v in labels.iteritems():
+		reverse_labels[v] = k
+
 	def __init__(self, filename='awesome.model', type=Type.BOTH):
 		self.filename = filename
 		self.vocab = {}
+
+		print Model.labels
+		print Model.reverse_labels
 
 		self.enabled_features = Model.sentence_features | Model.word_features
 	
@@ -90,7 +97,8 @@ class Model:
 		print error
 		
 	def predict(self, data):
-		pass
+		labels = []
+
 
 	def features_for_sentence(self, sentence):
 		features_list = []
