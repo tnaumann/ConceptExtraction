@@ -34,7 +34,7 @@ def read_txt(txt):
 	return note		
 	
 def read_con(con, txt):
-	label = [['none' for e in line] for line in txt]
+	label = [['none'] * len(line) for line in txt]
 	with open(con) as f:
 		for line in f:
 			c, t = line.split('||')
@@ -51,3 +51,12 @@ def read_con(con, txt):
 				label[l][i] = t
 	return label
 		
+def write_con(con, data, labels):
+	with open(con) as f:
+		for i, tmp in enumerate(zip(data, labels)):
+			datum, label = tmp
+			for j, tmp in enumerate(zip(datum, label)):
+				datum, label = tmp
+				if label != 'none':
+					idx = "%d:%d" % (i + 1, j)
+					print >>f, "c=\"%s\" %s %s||t=\"%s\"" % (datum, idx, idx, label)

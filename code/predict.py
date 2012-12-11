@@ -9,14 +9,12 @@ def main():
 	path = 'data/test_data'
 	files = [os.path.join(path, f) for f in os.listdir(path)]
 	
-	# Get data from files
-	data = []
-	for txt in files:
-		data += read_txt(txt)
-	
 	# Load a model and make a prediction for each file
 	model = Model()
-	model.predict(data)
+	for txt in files:
+		data = read_txt(txt)
+		labels = model.predict(data)
+		write_labels(txt[:-3] + 'con', data, labels)
 
 if __name__ == '__main__':
 	main()
