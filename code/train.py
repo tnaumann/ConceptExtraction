@@ -2,7 +2,7 @@ import os
 import os.path
 
 from model import Model
-from note import Note
+from note import *
 
 def main():
 	# Locate all the training files
@@ -18,10 +18,15 @@ def main():
 		cons = map(lambda f: os.path.join(path, 'concept', f), cons)
 		files += zip(txts, cons)
 	
-	# Train a model on the test data
+	# Get data and labels from files
+	data = []
+	for txt, con in files:
+		data += (read_txt(txt), read_con(con, txt))
+	data, labels = zip(*data)	#unzip
+	
+	# Train a model on the data and labels
 	model = Model()
-	notes = (Note(txt, con) for txt, con in files[:1])
-	model.train(notes, notes)
+	model.train(data, labels)
 
 if __name__ == '__main__':
 	main()
