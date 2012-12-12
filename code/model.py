@@ -67,6 +67,9 @@ class Model:
 		
 		
 	def predict(self, data):
+		with open(self.filename) as model:
+			self = pickle.load(model)
+		
 		svm_model_filename = self.filename + ".svm.trained"
 		crf_model_filename = self.filename + ".crf.trained"
 
