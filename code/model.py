@@ -64,7 +64,7 @@ class Model:
 		with open(self.filename, "a") as model:
 			pickle.dump(self, model)
 
-		svm_command = [Model.svm_train, "-s 1", "-t 0", svm_model_filename, svm_model_filename + ".trained"]
+		svm_command = [Model.svm_train, svm_model_filename, svm_model_filename + ".trained"]
 		output, error = subprocess.Popen(svm_command, stdout = subprocess.PIPE, stderr= subprocess.PIPE).communicate()
 		
 		
