@@ -5,6 +5,7 @@ import pickle
 import re
 import subprocess
 import sys
+import nltk
 
 from sets import Set
 from sets import ImmutableSet
@@ -158,7 +159,10 @@ class Model:
 				continue
 
 			if feature == "pos":
-				pass
+				tags = nltk.pos_tag(sentence)
+				for index, features in enumerate(features_list):
+					tag = tags[index][1]
+					features[("pos", tag)] = 1
 
 		return features_list
 
