@@ -10,6 +10,10 @@ sudo pip install Flask
 sudo pip install -U pyyaml nltk
 
 
+# Install nltk data
+python -m nltk.downloader maxent_treebank_pos_tagger
+
+
 # Get libsvm
 cd "$DIR/lib"
 wget "http://www.csie.ntu.edu.tw/~cjlin/cgi-bin/libsvm.cgi?+http://www.csie.ntu.edu.tw/~cjlin/libsvm+zip" -O "libsvm-3.14.zip"
