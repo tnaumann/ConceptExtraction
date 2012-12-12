@@ -2,6 +2,7 @@ from __future__ import with_statement
 
 import os
 import pickle
+import re
 import subprocess
 import sys
 
@@ -15,7 +16,7 @@ class Model:
 		CRF = 2
 
 	sentence_features = ImmutableSet(["pos"])
-	word_features = ImmutableSet(["word", "length"])
+	word_features = ImmutableSet(["word", "length", "mitre"])
 	
 	labels = {
 		"none":0,
@@ -173,8 +174,32 @@ class Model:
 
 			if feature == "length":
 				features[(feature, None)] = len(word)
+			
+			if feature == "mitre":
+				for f in Model.mitre_features:
+					if re.search(Model.mitre_features[f], word):
+						features[(feature, f)] = 1
 
 		return features
 
-			
+	mitre_features = {
+		"INITCAP" : r"^[A-Z].*$",
+		"ALLCAPS" : r"^[A-Z]+$",
+		"CAPSMIX" : r"^[A-Za-z]+$",
+		"HASDIGIT" : r"^.*[0-9].*$",
+		"SINGLEDIGIT" : r"^[0-9]$",
+		"DOUBLEDIGIT" : r"^[0-9][0-9]$",
+		"FOURDIGITS" : r"^[0-9][0-9][0-9][0-9]$",
+		"NATURALNUM" : r"^[0-9]+$",
+		"REALNUM" : r"^[0-9]+.[0-9]+$",
+		"ALPHANUM" : r"^[0-9A-Za-z]+$",
+		"HASDASH" : r"^.*-.*$",
+		"PUNCTUATION" : r"^[^A-Za-z0-9]+$",
+		"PHONE1" : r"^[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]$",
+		"PHONE2" : r"^[0-9][0-9][0-9]-[0-9][0-9][0-9]-[0-9][0-9][0-9][0-9]$",
+		"FIVEDIGIT" : r"^[0-9][0-9][0-9][0-9][0-9]",
+		"NOVOWELS" : r"^[^AaEeIiOoUu]+$",
+		"HASDASHNUMALPHA" : r"^.*[A-z].*-.*[0-9].*$ | *.[0-9].*-.*[0-9].*$",
+		"DATESEPERATOR" : r"^[-/]$",
+	}
 	
