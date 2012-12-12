@@ -34,7 +34,32 @@ cd "liblinear"
 make
 
 
+# Get liblbfgs
+cd "$DIR/lib"
+wget "https://github.com/downloads/chokkan/liblbfgs/liblbfgs-1.10.tar.gz" -O "liblbfgs-1.10.tar.gz"
+tar -xvzf "liblbfgs-1.10.tar.gz"
+
+ln -s "liblbfgs-1.10" "liblbfgs"
+rm "liblbfgs-1.10.tar.gz"
+
+cd "liblbfgs"
+./configure
+make
+make install
+
+
 # Get crfsuite
+cd "$DIR/lib"
+wget "https://github.com/downloads/chokkan/crfsuite/crfsuite-0.12.tar.gz" -O "crfsuite-0.12.tar.gz"
+tar -xvzf "crfsuite-0.12.tar.gz"
+
+ln -s "crfsuite-0.12" "crfsuite"
+rm "crfsuite-0.12.tar.gz"
+
+cd "crfsuite"
+./configure
+make
+make install
 
 
 
