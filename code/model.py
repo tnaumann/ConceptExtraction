@@ -12,6 +12,8 @@ import helper
 from sets import Set
 from sets import ImmutableSet
 
+import libml
+
 class Model:
 	class Type:
 		BOTH = 0
@@ -27,18 +29,7 @@ class Model:
 		"problem":2,
 		"test":3
 	}
-
-	reverse_labels = {}
-	for k, v in labels.iteritems():
-		reverse_labels[v] = k
-
-	libsvm_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "lib", "libsvm")
-	svm_train = os.path.join(libsvm_path, "svm-train")
-	if sys.platform == 'win32':
-		svm_train = os.path.join(libsvm_path, "windows", "svm-train")
-	svm_predict = os.path.join(libsvm_path, "svm-predict")
-	if sys.platform == 'win32':
-		svm_predict = os.path.join(libsvm_path, "windows", "svm-predict")
+	reverse_labels = {v:k for k, v in labels.items()}
 
 	def __init__(self, filename='awesome.model', type=Type.BOTH):
 		model_directory = os.path.dirname(filename)
@@ -71,11 +62,7 @@ class Model:
 		with open(self.filename, "w") as model:
 			pickle.dump(self, model)
 
-		svm_command = [Model.svm_train, "-c", "50", "-g", "0.03", "-w0", "0.5", svm_model_filename, svm_model_filename + ".trained"]
-		output, error = subprocess.Popen(svm_command, stdout = subprocess.PIPE, stderr= subprocess.PIPE).communicate()
-		
-		print output
-		print error
+		libml.svm_train(svm_model_filename)
 
 		
 	def predict(self, data):
@@ -85,17 +72,13 @@ class Model:
 		svm_model_filename = self.filename + ".svm.trained"
 		crf_model_filename = self.filename + ".crf.trained"
 
-		svm_test_input_filename = self.filename + ".test.input"
-		svm_test_output_filename = self.filename + ".test.output"
-
 		rows = []
 		for sentence in data:
 			rows.append(self.features_for_sentence(sentence))
 
 		self.write_features(svm_test_input_filename, rows, None, format = Model.Type.SVM);
 
-		svm_command = [Model.svm_predict, svm_test_input_filename, svm_model_filename, svm_test_output_filename]
-		output, error = subprocess.Popen(svm_command, stdout = subprocess.PIPE, stderr= subprocess.PIPE).communicate()
+		libml.svm_predict(svm_model_filename)
 
 		with open(svm_test_output_filename) as f:
 		    lines = f.readlines()
