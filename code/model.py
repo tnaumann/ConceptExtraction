@@ -15,11 +15,6 @@ from sets import ImmutableSet
 import libml
 
 class Model:
-	class Type:
-		BOTH = 0
-		SVM = 1
-		CRF = 2
-
 	sentence_features = ImmutableSet(["pos"])
 	word_features = ImmutableSet(["word", "length", "mitre"])
 	
@@ -31,7 +26,7 @@ class Model:
 	}
 	reverse_labels = {v:k for k, v in labels.items()}
 
-	def __init__(self, filename='awesome.model', type=Type.BOTH):
+	def __init__(self, filename='awesome.model', type=libml.ALL):
 		model_directory = os.path.dirname(filename)
 
 		if model_directory != "":
@@ -56,13 +51,13 @@ class Model:
 					if feature not in self.vocab:
 						self.vocab[feature] = len(self.vocab) + 1
 
-		self.write_features(svm_model_filename, rows, labels, format = Model.Type.SVM)
-		self.write_features(crf_model_filename, rows, labels, format = Model.Type.CRF)
+		self.write_features(svm_model_filename, rows, labels, format = libml.SVM)
+		self.write_features(crf_model_filename, rows, labels, format = libml.CRF)
 
 		with open(self.filename, "w") as model:
 			pickle.dump(self, model)
 
-		libml.svm_train(svm_model_filename)
+		libml.train(svm_model_filename)
 
 		
 	def predict(self, data):
@@ -72,13 +67,16 @@ class Model:
 		svm_model_filename = self.filename + ".svm.trained"
 		crf_model_filename = self.filename + ".crf.trained"
 
+		svm_test_input_filename = svm_model_filename + ".test.input"
+		svm_test_output_filename = svm_model_filename + ".test.output"
+		
 		rows = []
 		for sentence in data:
 			rows.append(self.features_for_sentence(sentence))
 
-		self.write_features(svm_test_input_filename, rows, None, format = Model.Type.SVM);
+		self.write_features(svm_test_input_filename, rows, None, format = libml.SVM);
 
-		libml.svm_predict(svm_model_filename)
+		libml.predict(svm_model_filename)
 
 		with open(svm_test_output_filename) as f:
 		    lines = f.readlines()
@@ -96,9 +94,9 @@ class Model:
 		return labels_list
 
 
-	def write_features(self, filename, rows, labels, format=Type.SVM):
+	def write_features(self, filename, rows, labels, format=libml.SVM):
 
-		if format == Model.Type.CRF:
+		if format == libml.CRF:
 			separator = "="
 		else:
 			separator = ":"
@@ -136,7 +134,7 @@ class Model:
 					f.write(" ".join(line))
 					f.write("\n")
 
-			if format == Model.Type.CRF:
+			if format == libml.CRF:
 				f.write("\n")
 
 		
