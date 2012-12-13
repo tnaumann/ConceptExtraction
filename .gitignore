@@ -39,3 +39,12 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# Latex stuff
+*.bbl
+*.blg
+*.log
+*.aux
+*.fdb_latexmk
+*.synctex.gz
+paper.pdf

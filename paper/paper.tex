@@ -1,0 +1,110 @@
+% THIS IS SIGPROC-SP.TEX - VERSION 3.1
+% WORKS WITH V3.2SP OF ACM_PROC_ARTICLE-SP.CLS
+% APRIL 2009
+%
+% It is an example file showing how to use the 'acm_proc_article-sp.cls' V3.2SP
+% LaTeX2e document class file for Conference Proceedings submissions.
+% ----------------------------------------------------------------------------------------------------------------
+% This .tex file (and associated .cls V3.2SP) *DOES NOT* produce:
+%       1) The Permission Statement
+%       2) The Conference (location) Info information
+%       3) The Copyright Line with ACM data
+%       4) Page numbering
+% ---------------------------------------------------------------------------------------------------------------
+% It is an example which *does* use the .bib file (from which the .bbl file
+% is produced).
+% REMEMBER HOWEVER: After having produced the .bbl file,
+% and prior to final submission,
+% you need to 'insert'  your .bbl file into your source .tex file so as to provide
+% ONE 'self-contained' source file.
+%
+% Questions regarding SIGS should be sent to
+% Adrienne Griscti ---> griscti@acm.org
+%
+% Questions/suggestions regarding the guidelines, .tex and .cls files, etc. to
+% Gerald Murray ---> murray@hq.acm.org
+%
+% For tracking purposes - this is V3.1SP - APRIL 2009
+
+% preprint + pagenumbering for page numbers
+\documentclass[preprint]{style}
+\pagenumbering{arabic}
+
+\usepackage{paralist}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{amsmath}
+
+
+
+% This gets rid of the block of whitespace on the first page
+\makeatletter
+\let\@copyrightspace\relax
+\makeatother
+
+
+\addtolength{\topmargin}{-.07in}
+\addtolength{\textheight}{.07in}
+
+%\addtolength{\oddsidemargin}{-0.08in}
+%\addtolength{\evensidemargin}{-0.08in}
+%\addtolength{\textwidth}{0.08in}
+
+
+
+\begin{document}
+
+\title{Medical Concept Extraction}
+
+\numberofauthors{3}
+\author{
+\alignauthor
+Samantha Ainsley\\
+\affaddr{MIT EECS}
+\email{ainsley@mit.edu}
+\alignauthor
+Salman Ahmad\\
+\affaddr{MIT EECS}
+\email{saahmad@mit.edu}
+\alignauthor
+Tristan Naumann\\
+\affaddr{MIT EECS}
+\email{tjn@mit.edu}
+}
+
+\date{14 December 2012}
+
+\maketitle
+\begin{abstract}
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. \cite{Wagner73}
+
+
+\end{abstract}
+
+\section{Introduction}
+\label{sec:introduction}
+
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+
+
+\section{Acknowledgments}
+\label{sec:acknowledgments}
+
+We sincerely thank Dr. Robert Berwick  and Geza Kovacs
+for their guidance, help, and support.
+
+
+%%%% May the Flow (Max-Flow, that is) be with you all.
+
+%
+% The following two commands are all you need in the
+% initial runs of your .tex file to
+% produce the bibliography for the citations in your paper.
+\bibliographystyle{abbrv}
+\bibliography{citations}  % sigproc.bib is the name of the Bibliography in this case
+
+\balancecolumns
+% That's all folks!
+\end{document}
