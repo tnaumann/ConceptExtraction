@@ -233,3 +233,10 @@ class TelnetWorker(Worker):
 		for line in output.split('\n'):
 			if str(line).find("Cross") != -1:
 				return float(line.split()[-1][0:-1])
+				
+def svm_train(svm_model_filename):
+	svm_command = [Model.svm_train, "-c", "50", "-g", "0.03", "-w0", "0.5", svm_model_filename, svm_model_filename + ".trained"]
+	output, error = subprocess.Popen(svm_command, stdout = subprocess.PIPE, stderr= subprocess.PIPE).communicate()
+	
+	print output
+	print error
