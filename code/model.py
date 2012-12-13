@@ -1,5 +1,6 @@
 from __future__ import with_statement
 
+import time
 import os
 import pickle
 import re
@@ -61,12 +62,15 @@ class Model:
 		self.write_features(svm_model_filename, rows, labels, format = Model.Type.SVM)
 		self.write_features(crf_model_filename, rows, labels, format = Model.Type.CRF)
 
-		with open(self.filename, "a") as model:
+		with open(self.filename, "w") as model:
 			pickle.dump(self, model)
 
-		svm_command = [Model.svm_train, svm_model_filename, svm_model_filename + ".trained"]
+		svm_command = [Model.svm_train, "-c", "50", "-g", "0.03", "-w0", "0.5", svm_model_filename, svm_model_filename + ".trained"]
 		output, error = subprocess.Popen(svm_command, stdout = subprocess.PIPE, stderr= subprocess.PIPE).communicate()
 		
+		print output
+		print error
+
 		
 	def predict(self, data):
 		with open(self.filename) as model:
