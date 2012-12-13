@@ -43,6 +43,7 @@ def main():
 		if k in con_files_map:
 			training_list.append((txt_files_map[k], con_files_map[k]))
 
+
 	## Locate all the training files
 	#files = []
 	#for h in ['beth', 'partners']:

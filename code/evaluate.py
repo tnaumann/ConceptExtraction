@@ -45,7 +45,6 @@ def main():
 			files.append((txt_files_map[k], con_files_map[k], ref_files_map[k]))
 	
 
-
 	# Locate the files
 	#path = 'data/test_data'
 	#txts = [os.path.join(path, f) for f in os.listdir(path)]
@@ -83,7 +82,7 @@ def main():
 	print
 	
 	
-	
+
 	# Compute the analysis stuff
 	precision = []
 	recall = []

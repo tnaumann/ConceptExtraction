@@ -3,6 +3,7 @@ import os.path
 import sys
 import glob
 import argparse
+import helper
 
 from model import Model
 from note import *
@@ -32,9 +33,11 @@ def main():
 
 	# Locate the test files
 	files = glob.glob(args.input)
-	
+
 	# Load a model and make a prediction for each file
 	path = args.output
+	helper.mkpath(args.output)
+
 	model = Model(filename = args.model)
 	for txt in files:
 		data = read_txt(txt)
