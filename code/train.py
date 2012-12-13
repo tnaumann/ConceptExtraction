@@ -3,6 +3,7 @@ import os.path
 import sys
 import glob
 import argparse
+import helper
 
 from sets import Set
 from model import Model
@@ -27,16 +28,9 @@ def main():
 	txt_files = glob.glob(args.txt)
 	con_files = glob.glob(args.con)
 
-	txt_files_map = {}
-	for txt_file in txt_files:
-		basename = os.path.splitext(os.path.basename(txt_file))[0]
-		txt_files_map[basename] = txt_file
-
-	con_files_map = {}
-	for con_file in con_files:
-		basename = os.path.splitext(os.path.basename(con_file))[0]
-		con_files_map[basename] = con_file
-
+	txt_files_map = helper.map_files(txt_files)
+	con_files_map = helper.map_files(con_files)
+	
 	for k in txt_files_map:
 		if k in con_files_map:
 			training_list.append((txt_files_map[k], con_files_map[k]))
