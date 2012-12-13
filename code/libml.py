@@ -15,9 +15,9 @@ else:
 
 # Library locations
 this_path = os.path.dirname(os.path.realpath(__file__))
-libsvm_path = os.path.join("..", "lib", "libsvm")
-liblinear_path = os.path.join("..", "lib", "liblinear")
-crfsuite_path = os.path.join("..", "lib", "crfsuite")
+libsvm_path = os.path.join(this_path, "..", "lib", "libsvm")
+liblinear_path = os.path.join(this_path, "..", "lib", "liblinear")
+crfsuite_path = os.path.join(this_path, "..", "lib", "crfsuite")
 
 is_win32 = (sys.platform == 'win32')
 if is_win32:
@@ -28,13 +28,13 @@ else:
 	crfsuite_path = os.path.join(crfsuite_path, "frontend")
 
 # File locations
-svm-train = os.path.join(libsvm_path, "svm-train")
-svm-predict = os.path.join(libsvm_path, "svm-predict")
-lin-train = os.path.join(liblinear_path, "train")
-lin-predict = os.path.join(libslinear_path, "predict")
-crf-suite = os.path.join(crfsuite_path, "crfsuite")
-crf-train = " ".join(crf-suite, "learn")
-crf-predict = " ".join(crf-suite, "tag")
+libsvm_train = os.path.join(libsvm_path, "svm-train")
+libsvm_predict = os.path.join(libsvm_path, "svm-predict")
+liblin_train = os.path.join(liblinear_path, "train")
+liblin_predict = os.path.join(liblinear_path, "predict")
+libcrf_suite = os.path.join(crfsuite_path, "crfsuite")
+libcrf_train = " ".join([libcrf_suite, "learn"])
+libcrf_predict = " ".join([libcrf_suite, "tag"])
 
 # Parallel performance options
 nr_local_worker = multiprocessing.cpu_count()
@@ -234,9 +234,50 @@ class TelnetWorker(Worker):
 			if str(line).find("Cross") != -1:
 				return float(line.split()[-1][0:-1])
 				
+###############################################################################
+# LIBSVM
+###############################################################################
 def svm_train(svm_model_filename):
-	svm_command = [Model.svm_train, "-c", "50", "-g", "0.03", "-w0", "0.5", svm_model_filename, svm_model_filename + ".trained"]
-	output, error = subprocess.Popen(svm_command, stdout = subprocess.PIPE, stderr= subprocess.PIPE).communicate()
+	command = [libsvm_train, "-c", "50", "-g", "0.03", "-w0", "0.5", svm_model_filename, svm_model_filename + ".trained"]
+	output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
 	
 	print output
 	print error
+	
+def svm_predict(svm_model_filename):
+	svm_test_input_filename = self.filename + ".test.input"
+	svm_test_output_filename = self.filename + ".test.output"
+	command = [libsvm_predict, svm_test_input_filename, svm_model_filename, svm_test_output_filename]
+	output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
+
+###############################################################################
+# LIBLINEAR
+###############################################################################
+def lin_train(lin_model_filename):
+	command = [liblin_train, "-c", "50", "-w0", "0.5", lin_model_filename, lin_model_filename + ".trained"]
+	output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
+	
+	print output
+	print error
+	
+def lin_predict(lin_model_filename):
+	lin_test_input_filename = self.filename + ".test.input"
+	lin_test_output_filename = self.filename + ".test.output"
+	command = [liblin_predict, lin_test_input_filename, lin_model_filename, lin_test_output_filename]
+	output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
+	
+###############################################################################
+# CRFSUITE
+###############################################################################
+def crf_train(crf_model_filename):
+	command = [libcrf_train, "-c", crf_model_filename + ".trained", crf_model_filename]
+	output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
+	
+	print output
+	print error
+	
+def crf_predict(crf_model_filename):
+	crf_test_input_filename = self.filename + ".test.input"
+	crf_test_output_filename = self.filename + ".test.output"
+	command = [libcrf_predict, "-m", crf_model_filename, crf_test_input_filename, '>', crf_test_output_filename]
+	output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
