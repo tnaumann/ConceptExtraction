@@ -234,7 +234,12 @@ class TelnetWorker(Worker):
 			if str(line).find("Cross") != -1:
 				return float(line.split()[-1][0:-1])
 
-
+def _bits(n):
+	while n:
+		b = n & (~n+1)
+		yield b
+		n ^= b
+		
 ###############################################################################
 # Learning Interface
 ###############################################################################
@@ -243,23 +248,39 @@ LIN = 2**2
 CRF = 2**3
 ALL = sum(2**i for i in range(1,4))
 
-def train(model_filename):
-	trained_filename = model_filename + ".trained"
-	command = [libsvm_train, "-c", "50", "-g", "0.03", "-w0", "0.5", model_filename, trained_filename]
-	# LIN: command = [liblin_train, "-c", "50", "-w0", "0.5", lin_model_filename, lin_model_filename + ".trained"]
-	# CRF: command = [libcrf_train, "-c", crf_model_filename + ".trained", crf_model_filename]
-	output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
+def train(model_filename, type=ALL):
+	print "train: ", model_filename, type, list(_bits(type))
+	for t in _bits(type):
+		if t == SVM:
+			trained_filename = model_filename + ".trained"
+			command = [libsvm_train, "-c", "50", "-g", "0.03", "-w0", "0.5", model_filename, trained_filename]
+		
+		if t == LIN:
+		# LIN: command = [liblin_train, "-c", "50", "-w0", "0.5", lin_model_filename, lin_model_filename + ".trained"]
+			pass
+		if t == CRF:
+		# CRF: command = [libcrf_train, "-c", crf_model_filename + ".trained", crf_model_filename]
+			pass
+		
+		output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
+		print output
+		print error
 	
-	print output
-	print error
-
-def predict(model_filename):
-	test_input_filename = model_filename + ".test.input"
-	test_output_filename = model_filename + ".test.output"
-	command = [libsvm_predict, test_input_filename, model_filename, test_output_filename]
-	# LIN: command = [liblin_predict, lin_test_input_filename, lin_model_filename, lin_test_output_filename]
-	# CRF: command = [libcrf_predict, "-m", crf_model_filename, crf_test_input_filename, '>', crf_test_output_filename]
-	output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
-	
-	print output
-	print error
+def predict(model_filename, type=ALL):
+	for t in _bits(type):
+		if t == SVM:
+			test_input_filename = model_filename + ".test.input"
+			test_output_filename = model_filename + ".test.output"
+			command = [libsvm_predict, test_input_filename, model_filename, test_output_filename]
+			
+		if t == LIN:
+		# LIN: command = [liblin_predict, lin_test_input_filename, lin_model_filename, lin_test_output_filename]
+			pass
+			
+		if t == CRF:
+		# CRF: command = [libcrf_predict, "-m", crf_model_filename, crf_test_input_filename, '>', crf_test_output_filename]
+			pass
+			
+		output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
+		print output
+		print error

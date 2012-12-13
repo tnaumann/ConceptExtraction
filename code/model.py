@@ -57,7 +57,7 @@ class Model:
 		with open(self.filename, "w") as model:
 			pickle.dump(self, model)
 
-		libml.train(svm_model_filename)
+		libml.train(svm_model_filename, type=libml.SVM)
 
 		
 	def predict(self, data):
@@ -76,7 +76,7 @@ class Model:
 
 		self.write_features(svm_test_input_filename, rows, None, format = libml.SVM);
 
-		libml.predict(svm_model_filename)
+		libml.predict(svm_model_filename, type=libml.SVM)
 
 		with open(svm_test_output_filename) as f:
 		    lines = f.readlines()
