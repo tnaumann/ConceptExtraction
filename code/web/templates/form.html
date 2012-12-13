@@ -4,9 +4,18 @@
 	<div class="span12">
 	  	<form method="POST" action="/process">
 	  		<fieldset>
-				<label></label>
+	  			<label>Choose Model</label>
+	  			<select name="model" class="input-block-level">
+	  				<option>SVM - Word features</option>
+	  				<option>CRF - Word features</option>
+	  				<option>LIN - Word features</option>
+	  			</select>
+	  			<span class="help-block"><br></span>
+
+				<label>Input Sentence</label>
 				<textarea name="input" class="input-block-level" rows="10" placeholder="Type your sentence here..."></textarea>
-				<span class="help-block"></span>
+
+
 				<button type="submit" class="btn btn-primary btn-large">Submit</button>
 	  		</fieldset>
 	  	</form>

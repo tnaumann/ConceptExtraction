@@ -12,7 +12,7 @@ def index():
 
 @app.route('/process', methods=['POST', 'GET'])
 def function():
-	return render_template("result.html", input = request.form['input'])
+	return render_template("result.html", input = request.form['input'], model = request.form['model'])
 
 def run():
     app.debug = True
