@@ -1,16 +1,33 @@
 import os
 import os.path
+import sys
+import glob
+import argparse
 
 from model import Model
 from note import *
 
 def main():
+	parser = argparse.ArgumentParser()
+	parser.add_argument("-i", 
+		dest = "input", 
+		help = "The input files to predict", 
+		default = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../data/test_data/*')
+	)
+	
+	parser.add_argument("-o", 
+		dest = "output", 
+		help = "The directory to write the output", 
+		default = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../data/test_predictions')
+	)
+	
+	args = parser.parse_args()
+
 	# Locate the test files
-	path = 'data/test_data'
-	files = [os.path.join(path, f) for f in os.listdir(path)]
+	files = glob.glob(args.input)
 	
 	# Load a model and make a prediction for each file
-	path = 'data/test_predictions'
+	path = args.output
 	model = Model()
 	for txt in files:
 		data = read_txt(txt)

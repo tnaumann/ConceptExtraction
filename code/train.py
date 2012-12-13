@@ -10,8 +10,17 @@ from note import *
 
 def main():
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-txt", default = '../data/concept_assertion_relation_training_data/beth/txt/*')
-	parser.add_argument("-con", default = '../data/concept_assertion_relation_training_data/beth/concept/*')
+
+	parser.add_argument("-t", 
+		dest = "txt", 
+		default = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../data/concept_assertion_relation_training_data/beth/txt/*')
+	)
+	
+	parser.add_argument("-c", 
+		dest = "con", 
+		default = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../data/concept_assertion_relation_training_data/beth/concept/*')
+	)
+	
 	args = parser.parse_args()
 
 	training_list = []
