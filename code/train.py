@@ -14,14 +14,22 @@ def main():
 
 	parser.add_argument("-t", 
 		dest = "txt", 
+		help = "The files that contain the training examples",
 		default = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../data/concept_assertion_relation_training_data/beth/txt/*')
 	)
 	
 	parser.add_argument("-c", 
 		dest = "con", 
+		help = "The files that contain the labels for the training examples",
 		default = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../data/concept_assertion_relation_training_data/beth/concept/*')
 	)
 	
+	parser.add_argument("-m",
+		dest = "model",
+		help = "Path to the model that should be generated",
+		default = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../model/awesome.model')
+	)
+
 	args = parser.parse_args()
 
 	training_list = []
@@ -30,7 +38,7 @@ def main():
 
 	txt_files_map = helper.map_files(txt_files)
 	con_files_map = helper.map_files(con_files)
-	
+
 	for k in txt_files_map:
 		if k in con_files_map:
 			training_list.append((txt_files_map[k], con_files_map[k]))
@@ -57,7 +65,7 @@ def main():
 		labels += read_con(con, datum)
 	
 	# Train a model on the data and labels
-	model = Model()
+	model = Model(filename = args.model)
 	model.train(data, labels)
 
 if __name__ == '__main__':

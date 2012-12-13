@@ -7,6 +7,7 @@ import re
 import subprocess
 import sys
 import nltk
+import helper
 
 from sets import Set
 from sets import ImmutableSet
@@ -40,6 +41,11 @@ class Model:
 		svm_predict = os.path.join(libsvm_path, "windows", "svm-predict")
 
 	def __init__(self, filename='awesome.model', type=Type.BOTH):
+		model_directory = os.path.dirname(filename)
+
+		if model_directory != "":
+			helper.mkpath(model_directory)
+
 		self.filename = filename
 		self.vocab = {}
 
