@@ -234,9 +234,12 @@ class TelnetWorker(Worker):
 			if str(line).find("Cross") != -1:
 				return float(line.split()[-1][0:-1])
 				
+###############################################################################
+# LIBSVM
+###############################################################################
 def svm_train(svm_model_filename):
-	svm_command = [libsvm_train, "-c", "50", "-g", "0.03", "-w0", "0.5", svm_model_filename, svm_model_filename + ".trained"]
-	output, error = Popen(svm_command, stdout = PIPE, stderr = PIPE).communicate()
+	command = [libsvm_train, "-c", "50", "-g", "0.03", "-w0", "0.5", svm_model_filename, svm_model_filename + ".trained"]
+	output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
 	
 	print output
 	print error
@@ -244,5 +247,37 @@ def svm_train(svm_model_filename):
 def svm_predict(svm_model_filename):
 	svm_test_input_filename = self.filename + ".test.input"
 	svm_test_output_filename = self.filename + ".test.output"
-	svm_command = [libsvm_predict, svm_test_input_filename, svm_model_filename, svm_test_output_filename]
-	output, error = Popen(svm_command, stdout = PIPE, stderr = PIPE).communicate()
+	command = [libsvm_predict, svm_test_input_filename, svm_model_filename, svm_test_output_filename]
+	output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
+
+###############################################################################
+# LIBLINEAR
+###############################################################################
+def lin_train(lin_model_filename):
+	command = [liblin_train, "-c", "50", "-w0", "0.5", lin_model_filename, lin_model_filename + ".trained"]
+	output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
+	
+	print output
+	print error
+	
+def lin_predict(lin_model_filename):
+	lin_test_input_filename = self.filename + ".test.input"
+	lin_test_output_filename = self.filename + ".test.output"
+	command = [liblin_predict, lin_test_input_filename, lin_model_filename, lin_test_output_filename]
+	output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
+	
+###############################################################################
+# CRFSUITE
+###############################################################################
+def crf_train(crf_model_filename):
+	command = [libcrf_train, "-c", crf_model_filename + ".trained", crf_model_filename]
+	output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
+	
+	print output
+	print error
+	
+def crf_predict(crf_model_filename):
+	crf_test_input_filename = self.filename + ".test.input"
+	crf_test_output_filename = self.filename + ".test.output"
+	command = [libcrf_predict, "-m", crf_model_filename, crf_test_input_filename, '>', crf_test_output_filename]
+	output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
