@@ -12,6 +12,7 @@ sudo pip install -U pyyaml nltk
 
 # Install nltk data
 python -m nltk.downloader maxent_treebank_pos_tagger
+python -m nltk.downloader wordnet
 
 
 # Get libsvm
