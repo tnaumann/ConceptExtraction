@@ -130,13 +130,30 @@ Our CRF F1 scores went from 0.58 to 0.82
 
 \subsection{Code Architecture}
 
-Include a system diagram of the code base.
+\begin{figure}
+\begin{center}
+	\includegraphics[width=1\columnwidth]{figures/system.png}
+\end{center}
+\caption{An overview of the system and codebase.}
+\label{fig:system}
+\end{figure}
 
-All of the code is available online at the following url:
+
+We built a fairly comprehensive framework for applying machine learning techniques to NLP domains. We built out a series of useful and reusable library modules and command line utilities to perform various tasks. An overview of the codebase can be seen in Figure~\ref{fig:system} and  all of the code is available online at the following url:
 
 {\tt https://github.com/tnaumann/ConceptExtraction}.
 
-\subsubsection{Commandline Utilities}
+\subsubsection{Data Formats and File I/O}
+
+\subsubsection{Feature Computation}
+
+\subsubsection{Model Encapsulation and Serialization}
+
+\subsubsection{Learning Algorithms}
+
+\subsubsection{Data Organization \& Directory Structure}
+
+\subsubsection{Command-line Utilities}
 
 \subsection{Web Service}
 
@@ -172,7 +189,7 @@ Our code leveraged various 3rd party libraries for training the models and gener
 \item {\tt flask} \cite{flask}: Flask is a micro Web framework written in Python. It contains a small yet useful set of features that allow developers to easily setup RESTful Web backends and an elegant tempting system to gracefully generate HTML. Flask is used to build the Web service portion of the project.
 
 \end{itemize}
-
+	
 
 \section{Results}
 
@@ -188,6 +205,8 @@ Describe the different feature-subsets that we trained and why.
 \subsection{System Performance}
 
 How long each model took to train and how fast we can predict. Also discussion the hardware that was used to train and predict in terms of CPU speed, memory, etc.
+
+Training time
 
 \subsection{Evaluation}
 
