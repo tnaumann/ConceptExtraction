@@ -45,7 +45,7 @@ class Model:
 		if model_directory != "":
 			helper.mkpath(model_directory)
 
-		self.filename = filename
+		self.filename = os.path.realpath(filename)
 		self.type = type
 		self.vocab = {}
 		

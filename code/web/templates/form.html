@@ -7,9 +7,7 @@
 	  			<label>Choose Model</label>
 	  			<select name="model" class="input-block-level">
 	  				{% for model in models: %}
-	  					<option>{{ model }} - SVM</option>
-	  					<option>{{ model }} - LIN</option>
-	  					<option>{{ model }} - CRF</option>
+	  					<option value="{{ model[0] }}">{{ model[1] }}</option>
 	  				{% endfor %}
 	  			</select>
 	  			<span class="help-block"><br></span>

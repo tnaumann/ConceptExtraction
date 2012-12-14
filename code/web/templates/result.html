@@ -5,7 +5,7 @@
 		<div class="alert alert-info">
 		  <b>Model:</b>
 		  <p>
-	  	{{ model }}
+			{{ model }}
 		  </p>
 		  <b>Input Sentence:</b>
 		  <p>
@@ -14,8 +14,11 @@
 		</div>
 	  	<div class="well">
 	  		<b>Output:</b>
-	  		<pTagged >
-	  			Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	  		<p>
+	  		{% for t in output: %}
+	  			<b>{{ t[0] }}:</b>  {{ t[1] }}
+	  			<br>
+	  		{% endfor %}
 	  		</p>
 	  	</div>
 	  	<form>
