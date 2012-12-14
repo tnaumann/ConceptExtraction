@@ -272,15 +272,18 @@ def predict(model_filename, type=ALL):
 			
 		if t == LIN:
 			filename = model_filename + ".lin"
-			command = [lin_predict, filename + ".test.in", filename + ".trained", filename + ".test.in"]
+			command = [lin_predict, filename + ".test.in", filename + ".trained", filename + ".test.out"]
 			
 		if t == CRF:
 			filename = model_filename + ".crf"
-			command = [crf_suite, "tag", "-m", filename + ".trained" , filename + "test.in"]	# NEEDS OUTPUT
+			command = [crf_suite, "tag", "-m", filename + ".trained" , filename + ".test.in"]	# NEEDS OUTPUT
 			
 		output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
-		print output
-		print error
+		
+		if t == CRF:
+			with open(filename + ".test.out", "w") as f:
+				for line in output.split():
+					f.write(line + "\n")
 		
 def write_features(model_filename, rows, labels, type=ALL):
 	for t in _bits(type):

@@ -72,7 +72,7 @@ class Model:
 
 		feat_lu = lambda f: {self.vocab[item]:f[item] for item in f if item in self.vocab}
 		rows = [map(feat_lu, x) for x in rows]
-		libml.write_features(self.filename, rows, None, type=libml.SVM);
+		libml.write_features(self.filename, rows, None);
 
 		libml.predict(self.filename, type=libml.SVM)
 
