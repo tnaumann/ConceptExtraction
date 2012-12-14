@@ -84,17 +84,42 @@ Low amounts of train data with high amounts of tests data.
 \subsection{Data Usage Agreements}
 
 \section{Design}
-Our system considers each document to be a stream of words grouped by sentences, and it attempts to provide the correct concept classification for each of those words. In order to identify the appropriate concept, our system considers natural language features for each document at successively broader contexts. Specifically, we first consider features using only the word itself as context, second we consider features which span the whole sentence , and last we consider n-gram features.
 
 \subsection{Data Flow \& Classification Task}
+Our system considers each document to be a stream of words grouped by sentences, and it attempts to provide the correct concept classification for each word. In order to identify the appropriate concept, our system considers natural language features for each document in successively broader contexts. Specifically, we first consider features using only the word itself as context, next we consider features which span the sentence, and last we consider n-gram features. In the sections that follow we discuss the linguistic features used in each context.
 
 \subsection{Word Features}
+Using only the word as context we are able to generate several interesting linguistic features. These features generally take on one of three forms: (1) intrinsic property of the word, (2) binary indicator for properties that we think are interesting, and (3) various techniques that map words into a small dimensional space such as stemming and word shape.
 
 \subsubsection{Word}
+The most obvious property of each word is perhaps the word itself. Since there is no linguistically meaningful, strict ordering over words, each word is represented as its own dimension. Consequently adding a baseline feature containing the word increases the dimension of our feature space to the size of the vocabulary in the training data.
 
 \subsubsection{Length}
+The next most obvious property of each word is its length. Unlike using the word as a feature, there is a strict ordering over length and consequently the addition of this feature increases the dimension of the space by only $1$. While the linguistic merit of length as a feature can be debated in conventional natural language processing, we felt it would play a large role in medical language in order to distinguish treatments, tests, and problems from words without a concept. Intuitively this is because often times treatments in the form of medications consist of long medical names, as do some of the words in medically described problems and tests.
 
 \subsubsection{MIT Regular Expressions}
+In order to capture some general characteristics of each word we included a set of regular expressions each of which adds a dimension to our classification. The characteristics we chose are as follows:
+\begin{itemize}
+\item {\tt INITCAP}: first letter is capitalized and alphabetic,
+\item {\tt ALLCAPS}: entire word is capitalized and alphabetic,
+\item {\tt CAPSMIX}: the word is a mix of capital and lowercase alphabetic characters,
+\item {\tt HASDIGIT}: there is a digit in the word,
+\item {\tt SINGLEDIGIT}: the token is a single digit,
+\item {\tt DOUBLEDIGIT}: the token is a two digits,
+\item {\tt FOURDIGITS}: the token is a series of four digits,
+\item {\tt NATURALNUM}: the token is a natural number,
+\item {\tt REALNUM}: the token is a real number,
+\item {\tt ALPHANUM}: the token contains only digits and alphabetic characters,
+\item {\tt HASDASH}: the token has a dash,
+\item {\tt PUNCTUATION}: the token is punctuation,
+\item {\tt PHONE1}: the token is a phone number,
+\item {\tt PHONE2}: the token is a phone number with area code,
+\item {\tt FIVEDIGIT}: the token is a series of five digits,
+\item {\tt NOVOWELS}: the token does not contain vowels (i.e. abbreviations),
+\item {\tt HASDASHNUMALPHA}: the token consists of a dash, numbers, and alphabetic characters, 
+\item {\tt DATESEPERATOR}: the token is a date separator (e.g. {\tt [-/]})
+\end{itemize}
+
 
 \subsubsection{Porter Stemmer}
 Our CRF F1 scores went from 0.58 to 0.82
