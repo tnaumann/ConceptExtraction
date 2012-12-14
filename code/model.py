@@ -38,9 +38,6 @@ class Model:
 		self.enabled_features = Model.sentence_features | Model.word_features
 	
 	def train(self, data, labels):
-		svm_model_filename = self.filename + ".svm"
-		crf_model_filename = self.filename + ".crf"
-
 		rows = []
 		for sentence in data:
 			rows.append(self.features_for_sentence(sentence))
@@ -51,35 +48,36 @@ class Model:
 					if feature not in self.vocab:
 						self.vocab[feature] = len(self.vocab) + 1
 
-		self.write_features(svm_model_filename, rows, labels, format = libml.SVM)
-		self.write_features(crf_model_filename, rows, labels, format = libml.CRF)
+		label_lu = lambda l: Model.labels[l]
+		labels = [map(label_lu, x) for x in labels]
+		
+		feat_lu = lambda f: {self.vocab[item]:f[item] for item in f}
+		rows = [map(feat_lu, x) for x in rows]
+		
+		libml.write_features(self.filename, rows, labels)
 
 		with open(self.filename, "w") as model:
 			pickle.dump(self, model)
 
-		libml.train(svm_model_filename, type=libml.SVM)
+		libml.train(self.filename)
 
 		
 	def predict(self, data):
 		with open(self.filename) as model:
 			self = pickle.load(model)
 		
-		svm_model_filename = self.filename + ".svm.trained"
-		crf_model_filename = self.filename + ".crf.trained"
-
-		svm_test_input_filename = svm_model_filename + ".test.input"
-		svm_test_output_filename = svm_model_filename + ".test.output"
-		
 		rows = []
 		for sentence in data:
 			rows.append(self.features_for_sentence(sentence))
 
-		self.write_features(svm_test_input_filename, rows, None, format = libml.SVM);
+		feat_lu = lambda f: {self.vocab[item]:f[item] for item in f if item in self.vocab}
+		rows = [map(feat_lu, x) for x in rows]
+		libml.write_features(self.filename, rows, None);
 
-		libml.predict(svm_model_filename, type=libml.SVM)
+		libml.predict(self.filename, type=libml.SVM)
 
-		with open(svm_test_output_filename) as f:
-		    lines = f.readlines()
+		with open(self.filename + ".svm.test.out") as f:
+			lines = f.readlines()
 		
 		labels_list = []
 		for sentence in data:
@@ -92,50 +90,6 @@ class Model:
 			labels_list.append(labels)
 
 		return labels_list
-
-
-	def write_features(self, filename, rows, labels, format=libml.SVM):
-
-		if format == libml.CRF:
-			separator = "="
-		else:
-			separator = ":"
-
-		with open(filename, "w") as f:
-			for sentence_index in range(len(rows)):
-				sentence = rows[sentence_index]
-				
-				if labels:
-					sentence_labels = labels[sentence_index]
-
-				if labels:
-					if len(sentence) != len(sentence_labels):
-						raise "Dimension mismatch"
-
-				for word_index in range(len(sentence)):
-					features = sentence[word_index]
-
-					if labels:
-						label = sentence_labels[word_index]
-
-					columns = {}
-					if labels:
-						line = [str(Model.labels[label])]
-					else:
-						line = ["-1"]
-
-					for item in features:
-						if item in self.vocab:
-							columns[self.vocab[item]] = features[item]
-
-					for key in sorted(columns.iterkeys()):
-						line.append(str(key) + separator + str(columns[key]))
-
-					f.write(" ".join(line))
-					f.write("\n")
-
-			if format == libml.CRF:
-				f.write("\n")
 
 		
 
