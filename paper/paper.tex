@@ -61,10 +61,6 @@ Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor 
 
 \section{Related Work}
 
-\vspace{1in}
-
-
-
 \section{Machine Learning}
 
 Talk about multi-class classification
@@ -75,20 +71,22 @@ Talk about multi-class classification
 
 \subsection{Conditional Random Fields}
 
-\vspace{1in}
+\section{Challenges}
 
+\subsection{High Dimensionality}
 
+\subsection{Biased Data}
 
-\section{Domain Specific Challenges}
+\subsection{Amount of Data}
 
-\subsection{Sparse Data}
+Low amounts of train data with high amounts of tests data.
 
-\vspace{1in}
+\subsection{Data Usage Agreements}
 
-
-
-\section{Algorithm}
+\section{Design}
 Our system considers each document to be a stream of words grouped by sentences, and it attempts to provide the correct concept classification for each of those words. In order to identify the appropriate concept, our system considers natural language features for each document at successively broader contexts. Specifically, we first consider features using only the word itself as context, second we consider features which span the whole sentence , and last we consider n-gram features.
+
+\subsection{Data Flow \& Classification Task}
 
 \subsection{Word Features}
 
@@ -120,9 +118,6 @@ Our CRF F1 scores went from 0.58 to 0.82
 \subsubsection{Previous}
 
 \subsubsection{Next}
-
-\subsection{Dimension Compression}
-
 
 \subsection{Parameter Tuning}
 
@@ -172,7 +167,7 @@ We built a fairly comprehensive framework for applying machine learning techniqu
 
 \subsubsection{Learning Algorithms}
 
-\subsubsection{Data Organization \& Directory Structure}
+\subsubsection{Data Organization and Directory Structure}
 
 \subsubsection{Command-line Utilities}
 
@@ -222,18 +217,15 @@ Talk about the competition and where the data came from. How large the data size
 
 Describe the different feature-subsets that we trained and why.
 
-
-\subsection{System Performance}
+\subsection{Runtime Performance}
 
 How long each model took to train and how fast we can predict. Also discussion the hardware that was used to train and predict in terms of CPU speed, memory, etc.
 
-Training time
-
-\subsection{Evaluation}
+\subsection{Classification Performance}
 
 A table of a bunch of awesome results. We should present results by model type (SVM, CRF, LIN) and feature set.
 
-\subsection{Discussion}
+\section{Discussion}
 
 Talk about what we saw in terms of which was the best feature set and model. 
 
@@ -243,7 +235,13 @@ Be sure to include FAILURE cases
 
 \section{Conclusion and Future Work}
 
-I don't know, BS something...
+\subsection{Dimension Collapse}
+
+\subsection{Feature Selection}
+
+\subsection{Parameter Selection}
+
+\subsection{More Data}
 
 
 \section{Acknowledgments}
