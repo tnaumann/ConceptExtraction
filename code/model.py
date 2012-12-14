@@ -20,7 +20,7 @@ import libml
 
 class Model:
 	sentence_features = ImmutableSet(["pos", "stem_wordnet", "test_result", "prev", "next"])
-	word_features = ImmutableSet(["word", "length", "mitre", "stem_porter", "stem_lancaster", "stem_snowball", "word_shape"])
+	word_features = ImmutableSet(["word", "length", "mitre", "stem_porter", "stem_lancaster", "word_shape"])
 	# THESE ARE FEATURES I TRIED THAT DON'T LOOK THAT PROMISING
 	# I have some faith in "metric_unit" and "has_problem_form"
 	# "radial_loc" may be too rare and "def_class" could be over fitting

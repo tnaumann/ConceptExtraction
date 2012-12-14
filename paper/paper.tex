@@ -5,6 +5,7 @@
 \usepackage{graphicx}
 \usepackage{url}
 \usepackage{amsmath}
+\usepackage{setspace}
 
 
 
@@ -20,8 +21,7 @@
 %\addtolength{\oddsidemargin}{-0.08in}
 %\addtolength{\evensidemargin}{-0.08in}
 %\addtolength{\textwidth}{0.08in}
-
-
+\setstretch{1.15}
 
 \begin{document}
 
@@ -48,28 +48,30 @@ Salman Ahmad\\
 \maketitle
 \begin{abstract}
 
-This paper presents a system for extracting medical concepts from patients' hospital records. Hospitals and medical practices are increasingly switching to electronic medical records. This trend has opened the doors to exciting applications for Natural Language Processing in medical and biological fields. One such application is concept extraction: identifying a high level semantic labels in a body of text. Concept extraction on medical records is useful in automating analysis tasks that would otherwise have to be done manually. For example, hospital administrators may want to tabulate what medications are being prescribed the most, insurance companies may want to ensure that patients receive proper care and are billed accordingly for fraud detection and auditing purposes, and government agencies may be interested in exploring and better understanding public health trends. 
+This paper presents a system for extracting medical concepts from patient hospital records. Hospitals and medical practices are increasingly switching to electronic medical records--this trend has opened the doors to exciting applications for Natural Language Processing in medicine and biology. One such application is concept extraction: identifying high-level semantic labels in a body of text. Concept extraction on medical records is useful in automating analysis tasks that would otherwise have to be done manually. For example, hospital administrators may want to tabulate what medications are being prescribed the most. Insurance companies may want to ensure that patients receive proper care and are billed accordingly for fraud detection and auditing purposes. Government agencies may be interested in exploring and better understanding public health trends. Automatic concept extraction systems help to streamline such critical yet laborious tasks.
 
-In service of that end, we present an algorithm and system that is capable of classifying words in medical records across four different medically-relevant categories. This is useful in and of itself to end users wishing to analyze medical records but is also useful in supporting other higher-level NLP and learning systems. This paper describes the system's design, implementation, and performance when tested on set of 500 pre-annotated medical records from Boston-area hospitals.
+In service of that end, we present an algorithm and system that is capable of classifying words in medical records across four different medically-relevant categories: (1) problems, (2) tests, (3) treatments, and (4) non-medical terms. This is useful not only in granting end users the ability to analyze medical records, but also in supporting other higher-level Natural Language Processing and learning systems. This paper describes the system's design, implementation, and performance when tested on set of 500 pre-annotated medical records from Boston-area hospitals.
 
 
 \end{abstract}
 
 \section{Introduction}
-
+TODO(SAM):
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
-\section{Related Work}
+\section{Background}
+TODO(SAM):
+\subsection{Related Work}
 
-\section{Machine Learning}
+\subsection{Machine Learning}
 
 Talk about multi-class classification
 
-\subsection{Support Vector Machines}
+\subsubsection{Support Vector Machines}
 
-\subsection{Linear Regression}
+\subsubsection{Linear Regression}
 
-\subsection{Conditional Random Fields}
+\subsubsection{Conditional Random Fields}
 
 \section{Challenges}
 
@@ -82,38 +84,99 @@ Talk about multi-class classification
 Low amounts of train data with high amounts of tests data.
 
 \subsection{Data Usage Agreements}
+TODO(SAM):
 
 \section{Design}
-Our system considers each document to be a stream of words grouped by sentences, and it attempts to provide the correct concept classification for each of those words. In order to identify the appropriate concept, our system considers natural language features for each document at successively broader contexts. Specifically, we first consider features using only the word itself as context, second we consider features which span the whole sentence , and last we consider n-gram features.
 
 \subsection{Data Flow \& Classification Task}
+Our system considers each document to be a stream of words grouped by sentences, and it attempts to provide the correct concept classification for each word. In order to identify the appropriate concept, our system considers natural language features for each document in successively broader contexts. Specifically, we first consider features using only the word itself as context, next we consider features which span the sentence, and last we consider n-gram features. In the sections that follow we discuss the linguistic features used in each context.
 
 \subsection{Word Features}
+Using only the word as context we are able to generate several interesting linguistic features. These features generally take on one of three forms: (1) intrinsic property of the word, (2) binary indicator for properties that we think are interesting, and (3) various techniques that map words into a small dimensional space such as stemming and word shape.
 
 \subsubsection{Word}
+The most obvious property of each word is perhaps the word itself. Since there is no linguistically meaningful, strict ordering over words, each word is represented as its own dimension. Consequently adding a baseline feature containing the word increases the dimension of our feature space to the size of the vocabulary in the training data. Nevertheless, the complete word serves as a fruitful feature in medical term classification in which many words carry the same meaning regardless of context. For example, terms such as "x-ray", "screen", "exam", "veal", and "sats" should be consistently recognized as test terms, just as "swelling", "failure", "trauma", and "syndrome" always indicate problems, and "therapy", "anesthesia", "vaccine", and "medication" are treatments. Granted, words like "heart" could be part of "heart rate" or "heart attack" and beg for more generic features.
 
 \subsubsection{Length}
+The next most obvious property of each word is its length. Unlike using the word as a feature, there is a strict ordering over length and consequently the addition of this feature increases the dimension of the space by only $1$. While the linguistic merit of length as a feature can be debated in conventional natural language processing, we felt it would play a large role in medical language in order to distinguish treatments, tests, and problems from words without a concept. Intuitively this is because often times treatments in the form of medications consist of long medical names, as do some of the words in medically described problems and tests.
 
 \subsubsection{MIT Regular Expressions}
+In order to capture some general characteristics of each word we included a set of regular expressions each of which adds a dimension to our classification. Such features help allow not only to pick up on traits within different medical categories--such as tests which are often abbreviated or contain numbers--but also to easily rule out non-medical terms such as days, phone numbers, etc. The characteristics we chose are as follows:
+\begin{itemize}
+\item {\tt INITCAP}: first letter is capitalized and alphabetic,
+\item {\tt ALLCAPS}: entire word is capitalized and alphabetic,
+\item {\tt CAPSMIX}: the word is a mix of capital and lowercase alphabetic characters,
+\item {\tt HASDIGIT}: there is a digit in the word,
+\item {\tt SINGLEDIGIT}: the token is a single digit,
+\item {\tt DOUBLEDIGIT}: the token is a two digits,
+\item {\tt FOURDIGITS}: the token is a series of four digits,
+\item {\tt NATURALNUM}: the token is a natural number,
+\item {\tt REALNUM}: the token is a real number,
+\item {\tt ALPHANUM}: the token contains only digits and alphabetic characters,
+\item {\tt HASDASH}: the token has a dash,
+\item {\tt PUNCTUATION}: the token is punctuation,
+\item {\tt PHONE1}: the token is a phone number,
+\item {\tt PHONE2}: the token is a phone number with area code,
+\item {\tt FIVEDIGIT}: the token is a series of five digits,
+\item {\tt NOVOWELS}: the token does not contain vowels (i.e. abbreviations),
+\item {\tt HASDASHNUMALPHA}: the token consists of a dash, numbers, and alphabetic characters, 
+\item {\tt DATESEPERATOR}: the token is a date separator (e.g. {\tt [-/]})
+\end{itemize}
+
 
 \subsubsection{Porter Stemmer}
+We already discussed the benefits of using entire words as features, but similar words come in many different forms. Motivated by generalization, we chose to use word stems as features and approached this feature extraction using three different stemming algorithms--two at the word-level and one at the sentence level (See 5.3.2). Namely, we used the Porter Stemming Algorithm, as developed by Martin Porter. 
+
+TODO(SAM):
+
 Our CRF F1 scores went from 0.58 to 0.82
 
 \subsubsection{Lancaster Stemmer}
 
-\subsubsection{Snowball Stemmer}
+TODO(SAM):
 
 \subsubsection{Word Shape}
+In the same spirit of our word length and MIT RegEx features, we decided to look at the high-level shapes of individual words for better generalization. More specifically, we encode words into new strings that give a sense of their capitalization and punctuation patterns as well as approximate length. We tested a variety of open-sourced word shape classification methods including two methods written by Dan Klein, one of which simply classifies words as numeric, strictly upper or lower cased, or mixed, and a second, more fine-grained classifier that attempts to group words into equivalence classes by collapsing sequences of the same time. Additionally classifiers developed by Christopher Manning seek to make less distinctions mid-sequence by sorting words based on length. Each word shape classifier result added an additional dimension to our feature space. By naively including all word shape alternatives as features, we were able to improve our testbed CRF F1 score from 0.82 to 0.85. After further testing, we settled on \begin{verbatim}______\end{verbatim} as the most promising word shape metric because \begin{verbatim}______\end{verbatim}.
+\begin{verbatim}
+  ()_()
+ ( ' ' )
+   >.<
+ (")_(")
+\end{verbatim}
+
+\subsubsection{Additional Feature Considerations}
+The word-level features that we ultimately decided to include in system were chosen based on performance gain, but many others were explored in testing. These features were selected after close examination of our training data, and are worthy of discussion. It is possible, of course, that there is a more optimal feature set than our final choice that includes the features listed below:
+
+\begin{itemize}
+
+\item {\tt Metric Units}
+A clear trend we noticed our medical record data was that numbers followed by metric weights (i.e. mg, milligrams, grams) are almost always part of treatment descriptions. Whereas numbers followed by metric lengths or areas are typically part of problem observations. We still believe this could be a useful feature for related systems.
+ 
+\item {\tt Word Endings Indicative of Medical Problem Type}
+Another obvious trend specific to medical problems are diseases ending in "itis" such as "bronchitis", "cellulites", "fibrositis", etc. and conditions ending in "ic" such as "diabetic", "anemic", etc. We added a regular expression to flag words with these endings, but the feature did little to nothing to improve performance. Such observations were likely already handled by our other word features.
+
+\item {\tt Prognosis Locations}
+Many diagnoses include locational information that should be tagged as part of the problem (i.e. "C4-C5 herniated disks"). We still think that a robust feature of this form could benefit our system, but our particular attempts proved unsuccessful.  
+
+\item {\tt Flag Words}
+Certain terms such as those described in 5.2.1 are consistently labeled as "problems", "tests", or "treatments". We attempted to create small dictionaries of these terms and assign flags to words that fall into one of the three dictionaries. The issue with this strategy is that words that words that should be labeled as one of our three medical terms but do not appear in the dictionary are now more closely aligned with purely non-medical words. That said, this feature improved accuracy for our three categories, but also yielded far too many false positives.
+
+\end{itemize}
 
 \subsection{Sentence Features}
+Even though the primary goal of our system is to tag concepts at the word level, these individual words often need to be considered in context. Before extracting the word-level features described in 5.2, we first analyze medical records at the sentence level and assign features to our words based on their usage within those sentences.
 
 \subsubsection{Part of Speech}
+A fruitful strategy for any concept extractor is to first tag words with labels indicating their Part of Speech in context. In our case, for example, whether an ambiguous term is used as an adjective versus a noun could distinguish it as part of a test rather than a problem. We used the NTLK max entropy Part of Speech Tagger, which is trained on the Penn TreeBank to tag individual sentences. We then iterate over the returned tags and add these as word-level features, adding another dimension to our feature set for each Part of Speech tag.
 
 \subsubsection{WordNet Lemmatizer}
+TODO(SAM):
 
 \subsubsection{Formatted Text}
+When reading through our training data, we noticed that test results are written in a variety of distinct forms that clearly separate these terms from problem or treatment terms. Since test result forms often spent multiple words such was "O2 sat -- 98\%" or "screen was positive". We wrote a series of regular expressions to capture these patterns with the test term as the first term in the sequence. We iterate over each word in the sentence and run our RegEx suite on the inclusive righthand sequence starting from that word. This feature adds only one additional dimension, and improved our CRF F1 test score from .85 to .90 by boosting our test term detection appreciably.
 
 \subsection{N-gram Features}
+TODO(SAM):
 
 \subsubsection{Previous}
 
