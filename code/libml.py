@@ -261,8 +261,8 @@ def train(model_filename, type=ALL):
 			command = [crf_suite, "learn", "-m", filename + ".trained", filename]
 			
 		output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
-		print output
-		print error
+		#print output
+		#print error
 	
 def predict(model_filename, type=ALL):
 	for t in bits(type):
