@@ -28,7 +28,24 @@ def main():
 		help = "The model to use for prediction",
 		default = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../models/awesome.model')
 	)
+	
+	parser.add_argument("--no-svm",
+		dest = "no_svm",
+		action = "store_true",
+		help = "Disable SVM model generation",
+	)
 
+	parser.add_argument("--no-lin",
+		dest = "no_lin",
+		action = "store_true",
+		help = "Disable LIN model generation",
+	)
+
+	parser.add_argument("--no-crf",
+		dest = "no_crf",
+		action = "store_true",
+		help = "Disable CRF model generation",
+	)
 	
 	args = parser.parse_args()
 
@@ -40,6 +57,13 @@ def main():
 	helper.mkpath(args.output)
 
 	model = Model.load(args.model)
+	if args.no_svm:
+		model.type &= ~libml.SVM
+	if args.no_lin:
+		model.type &= ~libml.LIN
+	if args.no_crf:
+		model.type &= ~libml.CRF
+		
 	for txt in files:
 		data = read_txt(txt)
 		labels = model.predict(data)
