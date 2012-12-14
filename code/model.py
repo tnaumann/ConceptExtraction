@@ -13,11 +13,13 @@ import helper
 from sets import Set
 from sets import ImmutableSet
 
+from wordshape import *
+
 import libml
 
 class Model:
 	sentence_features = ImmutableSet(["pos", "stem_wordnet"])
-	word_features = ImmutableSet(["word", "length", "mitre", "stem_porter", "stem_lancaster", "stem_snowball"])
+	word_features = ImmutableSet(["word", "length", "mitre", "stem_porter", "stem_lancaster", "stem_snowball", "word_shape"])
 	
 	labels = {
 		"none":0,
@@ -136,6 +138,12 @@ class Model:
 			if feature == "stem_snowball":
 				st = nltk.stem.SnowballStemmer("english")
 				features[(feature, st.stem(word))] = 1
+                
+			if feature == "word_shape":
+			    wordShapes = getWordShapes(word)
+			    for i, shape in enumerate(wordShapes):
+			        features[(feature + str(i), shape)] = 1
+                
 
 		return features
 
