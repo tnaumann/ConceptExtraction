@@ -92,13 +92,13 @@ Our system considers each document to be a stream of words grouped by sentences,
 Using only the word as context we are able to generate several interesting linguistic features. These features generally take on one of three forms: (1) intrinsic property of the word, (2) binary indicator for properties that we think are interesting, and (3) various techniques that map words into a small dimensional space such as stemming and word shape.
 
 \subsubsection{Word}
-The most obvious property of each word is perhaps the word itself. Since there is no linguistically meaningful, strict ordering over words, each word is represented as its own dimension. Consequently adding a baseline feature containing the word increases the dimension of our feature space to the size of the vocabulary in the training data.
+The most obvious property of each word is perhaps the word itself. Since there is no linguistically meaningful, strict ordering over words, each word is represented as its own dimension. Consequently adding a baseline feature containing the word increases the dimension of our feature space to the size of the vocabulary in the training data. Nevertheless, the complete word serves as a fruitful feature in medical term classification in which many words carry the same meaning regardless of context. For example, terms such as "x-ray", "screen", "exam", "veal", and "sats" should be consistently recognized as test terms, just as "swelling", "failure", "trauma", and "syndrome" always indicate problems, and "therapy", "anesthesia", "vaccine", and "medication" are treatments. Granted, words like "heart" could be part of "heart rate" or "heart attack" and beg for more generic features.
 
 \subsubsection{Length}
 The next most obvious property of each word is its length. Unlike using the word as a feature, there is a strict ordering over length and consequently the addition of this feature increases the dimension of the space by only $1$. While the linguistic merit of length as a feature can be debated in conventional natural language processing, we felt it would play a large role in medical language in order to distinguish treatments, tests, and problems from words without a concept. Intuitively this is because often times treatments in the form of medications consist of long medical names, as do some of the words in medically described problems and tests.
 
 \subsubsection{MIT Regular Expressions}
-In order to capture some general characteristics of each word we included a set of regular expressions each of which adds a dimension to our classification. The characteristics we chose are as follows:
+In order to capture some general characteristics of each word we included a set of regular expressions each of which adds a dimension to our classification. Such features help allow not only to pick up on traits within different medical categories--such as tests which are often abbreviated or contain numbers--but also to easily rule out non-medical terms such as days, phone numbers, etc. The characteristics we chose are as follows:
 \begin{itemize}
 \item {\tt INITCAP}: first letter is capitalized and alphabetic,
 \item {\tt ALLCAPS}: entire word is capitalized and alphabetic,
@@ -129,6 +129,32 @@ Our CRF F1 scores went from 0.58 to 0.82
 \subsubsection{Snowball Stemmer}
 
 \subsubsection{Word Shape}
+In the same spirit of our word length and MIT RegEx features, we decided to look at the high-level shapes of individual words for better generalization. More specifically, we encode words into new strings that give a sense of their capitalization and punctuation patterns as well as approximate length. We tested a variety of open-sourced word shape classification methods including two methods written by Dan Klein, one of which simply classifies words as numeric, strictly upper or lower cased, or mixed, and a second, more fine-grained classifier that attempts to group words into equivalence classes by collapsing sequences of the same time. Additionally classifiers developed by Christopher Manning seek to make less distinctions mid-sequence by sorting words based on length. Each word shape classifier result added an additional dimension to our feature space. By naively including all word shape alternatives as features, we were able to improve our testbed CRF F1 score from 0.82 to 0.85. After further testing, we settled on \begin{verbatim}______\end{verbatim} as the most promising word shape metric because \begin{verbatim}______\end{verbatim}.
+\begin{verbatim}
+  ()_()
+ ( ' ' )
+   >.<
+ (")_(")
+\end{verbatim}
+
+\subsubsection{Additional Feature Considerations}
+The word-level features that we ultimately decided to include in system were chosen based on performance gain, but many others were explored in testing. These features were selected after close examination of our training data, and are worthy of discussion. It is possible, of course, that there is a more optimal feature set than our final choice that includes the features listed below:
+
+\begin{itemize}
+
+\item {\tt Metric Units}
+A clear trend we noticed our medical record data was that numbers followed by metric weights (i.e. mg, milligrams, grams) are almost always part of treatment descriptions. Whereas numbers followed by metric lengths or areas are typically part of problem observations. We still believe this could be a useful feature for related systems.
+ 
+\item {\tt Word Endings Indicative of Medical Problem Type}
+Another obvious trend specific to medical problems are diseases ending in "itis" such as "bronchitis", "cellulites", "fibrositis", etc. and conditions ending in "ic" such as "diabetic", "anemic", etc. We added a regular expression to flag words with these endings, but the feature did little to nothing to improve performance. Such observations were likely already handled by our other word features.
+
+\item {\tt Prognosis Locations}
+Many diagnoses include locational information that should be tagged as part of the problem (i.e. "C4-C5 herniated disks"). We still think that a robust feature of this form could benefit our system, but our particular attempts proved unsuccessful.  
+
+\item {\tt Flag Words}
+Certain terms such as those described in 5.2.1 are consistently labeled as "problems", "tests", or "treatments". We attempted to create small dictionaries of these terms and assign flags to words that fall into one of the three dictionaries. The issue with this strategy is that words that words that should be labeled as one of our three medical terms but do not appear in the dictionary are now more closely aligned with purely non-medical words. That said, this feature improved accuracy for our three categories, but also yielded far too many false positives.
+
+\end{itemize}
 
 \subsection{Sentence Features}
 
