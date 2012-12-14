@@ -88,20 +88,41 @@ Talk about multi-class classification
 
 
 \section{Algorithm}
-
-\subsection{Sentence Features}
+Our system considers each document to be a stream of words grouped by sentences, and it attempts to provide the correct concept classification for each of those words. In order to identify the appropriate concept, our system considers natural language features for each document at successively broader contexts. Specifically, we first consider features using only the word itself as context, second we consider features which span the whole sentence , and last we consider n-gram features.
 
 \subsection{Word Features}
 
-Call out importance of word shape
+\subsubsection{Word}
+
+\subsubsection{Length}
+
+\subsubsection{MIT Regular Expressions}
+
+\subsubsection{Porter Stemmer}
+Our CRF F1 scores went from 0.58 to 0.82
+
+\subsubsection{Lancaster Stemmer}
+
+\subsubsection{Snowball Stemmer}
+
+\subsubsection{Word Shape}
+
+\subsection{Sentence Features}
+
+\subsubsection{Part of Speech}
+
+\subsubsection{WordNet Lemmatizer}
+
+\subsubsection{Formatted Text}
 
 \subsection{N-gram Features}
 
+\subsubsection{Previous}
+
+\subsubsection{Next}
+
 \subsection{Dimension Compression}
 
-\subsection{Stemming}
-
-Our CRF F1 scores went from 0.58 to 0.82
 
 \subsection{Parameter Tuning}
 

@@ -39,14 +39,14 @@ def main():
 	path = args.output
 	helper.mkpath(args.output)
 
-	model = Model(filename = args.model)
+	model = Model.load(args.model)
 	for txt in files:
 		data = read_txt(txt)
 		labels = model.predict(data)
 		con = os.path.split(txt)[-1]
 		con = con[:-3] + 'con'
 		
-		for t in libml.bits(libml.ALL):
+		for t in libml.bits(model.type):
 			if t == libml.SVM:
 				helper.mkpath(os.path.join(args.output, "svm"))
 				con_path = os.path.join(path, "svm", con)
