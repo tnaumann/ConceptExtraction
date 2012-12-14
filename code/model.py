@@ -33,6 +33,11 @@ class Model:
 		"test":3
 	}
 	reverse_labels = {v:k for k, v in labels.items()}
+	
+	@staticmethod
+	def load(filename='awesome.model'):
+		with open(filename) as model:
+			return pickle.load(model)
 
 	def __init__(self, filename='awesome.model', type=libml.ALL):
 		model_directory = os.path.dirname(filename)
@@ -72,9 +77,6 @@ class Model:
 
 		
 	def predict(self, data):
-		with open(self.filename) as model:
-			self = pickle.load(model)
-		
 		rows = []
 		for sentence in data:
 			rows.append(self.features_for_sentence(sentence))
@@ -187,7 +189,7 @@ class Model:
 				
 			if feature == "stem_snowball":
 				st = nltk.stem.SnowballStemmer("english")
-				features[(feature, st.stem(word))] = 1
+				#features[(feature, st.stem(word))] = 1
                 
 			if feature == "word_shape":
 			    wordShapes = getWordShapes(word)
