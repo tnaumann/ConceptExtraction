@@ -28,7 +28,7 @@ def main():
 	parser.add_argument("-m",
 		dest = "model",
 		help = "Path to the model that should be generated",
-		default = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../model/awesome.model')
+		default = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../models/awesome.model')
 	)
 
 	parser.add_argument("-d",

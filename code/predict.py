@@ -26,7 +26,7 @@ def main():
 	parser.add_argument("-m",
 		dest = "model",
 		help = "The model to use for prediction",
-		default = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../model/awesome.model')
+		default = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../models/awesome.model')
 	)
 
 	
