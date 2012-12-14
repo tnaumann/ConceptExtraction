@@ -37,7 +37,7 @@ class Model:
 
 		self.enabled_features = Model.sentence_features | Model.word_features
 	
-	def train(self, data, labels):
+	def train(self, data, labels, type=libml.ALL):
 		rows = []
 		for sentence in data:
 			rows.append(self.features_for_sentence(sentence))
@@ -54,15 +54,15 @@ class Model:
 		feat_lu = lambda f: {self.vocab[item]:f[item] for item in f}
 		rows = [map(feat_lu, x) for x in rows]
 		
-		libml.write_features(self.filename, rows, labels)
+		libml.write_features(self.filename, rows, labels, type)
 
 		with open(self.filename, "w") as model:
 			pickle.dump(self, model)
 
-		libml.train(self.filename)
+		libml.train(self.filename, type)
 
 		
-	def predict(self, data):
+	def predict(self, data, type=libml.ALL):
 		with open(self.filename) as model:
 			self = pickle.load(model)
 		
@@ -72,26 +72,21 @@ class Model:
 
 		feat_lu = lambda f: {self.vocab[item]:f[item] for item in f if item in self.vocab}
 		rows = [map(feat_lu, x) for x in rows]
-		libml.write_features(self.filename, rows, None);
+		libml.write_features(self.filename, rows, None, type);
 
-		libml.predict(self.filename, type=libml.SVM)
-
-		with open(self.filename + ".svm.test.out") as f:
-			lines = f.readlines()
+		libml.predict(self.filename, type)
 		
-		labels_list = []
-		for sentence in data:
-			labels = []
-			for word in sentence:
-				label = lines.pop(0)
-				label = label.strip()
-				labels.append(Model.reverse_labels[int(label)])
-			
-			labels_list.append(labels)
+		labels_list = libml.read_labels(self.filename, type)
+		
+		for t, labels in labels_list.items():
+			tmp = []
+			for sentence in data:
+				tmp.append([labels.pop(0) for i in range(len(sentence))])
+				tmp[-1] = map(lambda l: l.strip(), tmp[-1])
+				tmp[-1] = map(lambda l: Model.reverse_labels[int(l)], tmp[-1])
+			labels_list[t] = tmp
 
 		return labels_list
-
-		
 
 	def features_for_sentence(self, sentence):
 		features_list = []
@@ -151,4 +146,69 @@ class Model:
 		"HASDASHNUMALPHA" : r"^.*[A-z].*-.*[0-9].*$ | *.[0-9].*-.*[0-9].*$",
 		"DATESEPERATOR" : r"^[-/]$",
 	}
+    
+    def is_test_result (self, context):
+        # note: make spaces optional? 
+        regex = r"^[A-Za-z]+( )*(-|--|—|:|was|of|\*|>|<|more than|less than)( )*[0-9]+(%)*$"
+        if not re.search(regex, context):
+            return r"^[A-Za-z]+ was (positive|negative)$"
+        return True
+
+    def is_weight (self, word):
+        regex = r"^[0-9]*(mg|g|milligrams|grams)$"
+        return re.search(regex, word)
+        
+    def is_size (self, word): 
+        regex = r"^[0-9]*(mm|cm|millimeters|centimeters)$"
+        return re.search(regex, word)
+
+    def is_prognosis_location (self, word):
+        regex = r"^(c|C)[0-9]+(-(c|C)[0-9]+)*$"
+        return re.search(regex, word)
+    
+    def has_problem_form (self, word):
+         regex = r"^[A-Za-z]+(ic|is)$"
+         return re.search(regex, word)
+        
+    test_terms = {
+        "eval", "evaluation", "evaluations",
+        "sat", "sats", "saturation", 
+        "exam", "exams", 
+        "rate", "rates",
+        "test", "tests", 
+        "xray", "xrays", 
+        "screen", "screens", 
+        "level", "levels",
+        "tox"
+    }
+    
+    problem_terms = {
+        "swelling", 
+        "wound", "wounds", 
+        "symptom", "symptoms", 
+        "shifts", "failure", 
+        "insufficiency", "insufficiencies",
+        "mass", "masses", 
+        "aneurysm", "aneurysms",
+        "ulcer", "ulcers",
+        "trama", "cancer",
+        "disease", "diseased",
+        "bacterial", "viral",
+        "syndrome", "syndromes",
+        "pain", "pains"
+        "burns", "burned",
+        "broken", "fractured"
+    }
+    
+    treatment_terms = {
+        "therapy", 
+        "replacement",
+        "anesthesia",
+        "supplement", "supplemental",
+        "vaccine", "vaccines"
+        "dose", "doses",
+        "shot", "shots",
+        "medication", "medicine",
+        "treament", "treatments"
+    }
 	
