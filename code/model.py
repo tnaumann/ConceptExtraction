@@ -7,6 +7,7 @@ import re
 import subprocess
 import sys
 import nltk
+import nltk.corpus.reader
 import nltk.stem
 import helper
 
@@ -97,15 +98,29 @@ class Model:
 		for word in sentence:
 			features_list.append(self.features_for_word(word))
 
+		tags = None
 		for feature in Model.sentence_features:
 			if feature not in self.enabled_features:
 				continue
 
 			if feature == "pos":
-				tags = nltk.pos_tag(sentence)
+				tags = tags or nltk.pos_tag(sentence)
 				for index, features in enumerate(features_list):
 					tag = tags[index][1]
-					features[("pos", tag)] = 1
+					features[(feature, tag)] = 1
+					
+			if feature == "stem_wordnet":
+				tags = tags or nltk.pos_tag(sentence)
+				morphy_tags = {
+					'NN':nltk.corpus.reader.wordnet.NOUN,
+					'JJ':nltk.corpus.reader.wordnet.ADJ,
+					'VB':nltk.corpus.reader.wordnet.VERB,
+					'RB':nltk.corpus.reader.wordnet.ADV}
+				morphy_tags = [(w, morphy_tags.setdefault(t[:2], nltk.corpus.reader.wordnet.NOUN)) for w,t in tags]
+				st = nltk.stem.WordNetLemmatizer()
+				for index, features in enumerate(features_list):
+					tag = morphy_tags[index]
+					features[(feature, st.lemmatize(*tag))] = 1
 
 		return features_list
 
