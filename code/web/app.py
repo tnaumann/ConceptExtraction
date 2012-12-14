@@ -4,11 +4,17 @@ from flask import request
 
 import json as simplejson
 
+import os
+import os.path
+
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-	return render_template("form.html")
+
+	models_directory = os.path.join(os.path.dirname(__file__), "../../models")
+	models = os.listdir(models_directory)
+	return render_template("form.html", models = models)
 
 @app.route('/process', methods=['POST', 'GET'])
 def function():
