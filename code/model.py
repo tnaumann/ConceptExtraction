@@ -72,11 +72,11 @@ class Model:
 
 		feat_lu = lambda f: {self.vocab[item]:f[item] for item in f if item in self.vocab}
 		rows = [map(feat_lu, x) for x in rows]
-		self.write_features(svm_test_input_filename, rows, None, format = libml.SVM);
+		libml.write_features(self.filename, rows, None, type=libml.SVM);
 
 		libml.predict(self.filename, type=libml.SVM)
 
-		with open(svm_test_output_filename) as f:
+		with open(self.filename + ".svm.test.out") as f:
 			lines = f.readlines()
 		
 		labels_list = []

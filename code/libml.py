@@ -268,15 +268,15 @@ def predict(model_filename, type=ALL):
 	for t in _bits(type):
 		if t == SVM:
 			filename = model_filename + ".svm"
-			command = [svm_predict, filename + ".test.in", filename, filename + ".test.out"]
+			command = [svm_predict, filename + ".test.in", filename + ".trained", filename + ".test.out"]
 			
 		if t == LIN:
 			filename = model_filename + ".lin"
-			command = [lin_predict, filename + ".test.in", filename, filename + ".test.in"]
+			command = [lin_predict, filename + ".test.in", filename + ".trained", filename + ".test.in"]
 			
 		if t == CRF:
 			filename = model_filename + ".crf"
-			command = [crf_suite, "tag", "-m", filename, filename + "test.in"]	# NEEDS OUTPUT
+			command = [crf_suite, "tag", "-m", filename + ".trained" , filename + "test.in"]	# NEEDS OUTPUT
 			
 		output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
 		print output
@@ -285,16 +285,16 @@ def predict(model_filename, type=ALL):
 def write_features(model_filename, rows, labels, type=ALL):
 	for t in _bits(type):
 		if t == SVM:
-			file_suffix, null_label = ".svm", "-1"
-			feature_sep, sentence_sep = ":", ""
+			file_suffix = ".svm" + (".test.in" if not labels else "")
+			null_label, feature_sep, sentence_sep = "-1", ":", ""
 			
 		if t == LIN:
-			file_suffix, null_label = ".lin", "-1"
-			feature_sep, sentence_sep = ":", ""
+			file_suffix = ".lin" + (".test.in" if not labels else "")
+			null_label, feature_sep, sentence_sep = "-1", ":", ""
 		
 		if t == CRF:
-			file_suffix, null_label = ".crf", ""
-			feature_sep, sentence_sep = "=", "\n"
+			file_suffix = ".crf" + (".test.in" if not labels else "")
+			null_label, feature_sep, sentence_sep = "", "=", "\n"
 
 		filename = model_filename + file_suffix
 		with open(filename, "w") as f:
@@ -313,6 +313,6 @@ def write_features(model_filename, rows, labels, type=ALL):
 					for k,v in sorted(features.items()):
 						line.append(str(k) + feature_sep + str(v))
 
-					f.write("\t".join(line) + "\n")
+					f.write("\t".join(line).strip() + "\n")
 				
 				f.write(sentence_sep)
