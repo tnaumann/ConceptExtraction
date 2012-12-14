@@ -149,7 +149,7 @@ class Model:
 	
 	def is_test_result (self, context):
 		# note: make spaces optional? 
-		regex = r"^[A-Za-z]+( )*(-|--:|was|of|\*|>|<|more than|less than)( )*[0-9]+(%)*$"
+		regex = r"^[A-Za-z]+( )*(-|--|:|was|of|\*|>|<|more than|less than)( )*[0-9]+(%)*$"
 		if not re.search(regex, context):
 			return r"^[A-Za-z]+ was (positive|negative)$"
 		return True
