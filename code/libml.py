@@ -28,13 +28,11 @@ else:
 	crfsuite_path = os.path.join(crfsuite_path, "frontend")
 
 # File locations
-libsvm_train = os.path.join(libsvm_path, "svm-train")
-libsvm_predict = os.path.join(libsvm_path, "svm-predict")
-liblin_train = os.path.join(liblinear_path, "train")
-liblin_predict = os.path.join(liblinear_path, "predict")
-libcrf_suite = os.path.join(crfsuite_path, "crfsuite")
-libcrf_train = " ".join([libcrf_suite, "learn"])
-libcrf_predict = " ".join([libcrf_suite, "tag"])
+svm_train = os.path.join(libsvm_path, "svm-train")
+svm_predict = os.path.join(libsvm_path, "svm-predict")
+lin_train = os.path.join(liblinear_path, "train")
+lin_predict = os.path.join(liblinear_path, "predict")
+crf_suite = os.path.join(crfsuite_path, "crfsuite")
 
 # Parallel performance options
 nr_local_worker = multiprocessing.cpu_count()
@@ -243,25 +241,25 @@ def _bits(n):
 ###############################################################################
 # Learning Interface
 ###############################################################################
-SVM = 2**1
-LIN = 2**2
-CRF = 2**3
-ALL = sum(2**i for i in range(1,4))
+SVM = 2**0
+LIN = 2**1
+CRF = 2**2
+ALL = sum(2**i for i in range(3))
 
 def train(model_filename, type=ALL):
-	print "train: ", model_filename, type, list(_bits(type))
 	for t in _bits(type):
 		if t == SVM:
-			trained_filename = model_filename + ".trained"
-			command = [libsvm_train, "-c", "50", "-g", "0.03", "-w0", "0.5", model_filename, trained_filename]
+			filename = model_filename + ".svm"
+			command = [svm_train, "-c", "50", "-g", "0.03", "-w0", "0.5", filename, filename + ".trained"]
 		
 		if t == LIN:
-		# LIN: command = [liblin_train, "-c", "50", "-w0", "0.5", lin_model_filename, lin_model_filename + ".trained"]
-			pass
+			filename = model_filename + ".lin"
+			command = [lin_train, "-c", "50", "-w0", "0.5", filename, filename + ".trained"]
+			
 		if t == CRF:
-		# CRF: command = [libcrf_train, "-c", crf_model_filename + ".trained", crf_model_filename]
-			pass
-		
+			filename = model_filename + ".crf"
+			command = [crf_suite, "learn", "-m", filename + ".trained", filename]
+			
 		output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
 		print output
 		print error
@@ -269,18 +267,52 @@ def train(model_filename, type=ALL):
 def predict(model_filename, type=ALL):
 	for t in _bits(type):
 		if t == SVM:
-			test_input_filename = model_filename + ".test.input"
-			test_output_filename = model_filename + ".test.output"
-			command = [libsvm_predict, test_input_filename, model_filename, test_output_filename]
+			filename = model_filename + ".svm"
+			command = [svm_predict, filename + ".test.in", filename, filename + ".test.out"]
 			
 		if t == LIN:
-		# LIN: command = [liblin_predict, lin_test_input_filename, lin_model_filename, lin_test_output_filename]
-			pass
+			filename = model_filename + ".lin"
+			command = [lin_predict, filename + ".test.in", filename, filename + ".test.in"]
 			
 		if t == CRF:
-		# CRF: command = [libcrf_predict, "-m", crf_model_filename, crf_test_input_filename, '>', crf_test_output_filename]
-			pass
+			filename = model_filename + ".crf"
+			command = [crf_suite, "tag", "-m", filename, filename + "test.in"]	# NEEDS OUTPUT
 			
 		output, error = Popen(command, stdout = PIPE, stderr = PIPE).communicate()
 		print output
 		print error
+		
+def write_features(model_filename, rows, labels, type=ALL):
+	for t in _bits(type):
+		if t == SVM:
+			file_suffix, null_label = ".svm", "-1"
+			feature_sep, sentence_sep = ":", ""
+			
+		if t == LIN:
+			file_suffix, null_label = ".lin", "-1"
+			feature_sep, sentence_sep = ":", ""
+		
+		if t == CRF:
+			file_suffix, null_label = ".crf", ""
+			feature_sep, sentence_sep = "=", "\n"
+
+		filename = model_filename + file_suffix
+		with open(filename, "w") as f:
+			for sentence_index, sentence in enumerate(rows):
+				if labels:
+					sentence_labels = labels[sentence_index]
+					assert "Dimension mismatch", len(sentence) == len(sentence_labels)
+
+				for word_index, features in enumerate(sentence):
+					if labels:
+						label = sentence_labels[word_index]
+						line = [str(label)]
+					else:
+						line = [null_label]
+
+					for k,v in sorted(features.items()):
+						line.append(str(k) + feature_sep + str(v))
+
+					f.write("\t".join(line) + "\n")
+				
+				f.write(sentence_sep)
