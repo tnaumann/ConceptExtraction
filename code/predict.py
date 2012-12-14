@@ -5,6 +5,7 @@ import glob
 import argparse
 import helper
 
+import libml
 from model import Model
 from note import *
 
@@ -42,9 +43,21 @@ def main():
 	for txt in files:
 		data = read_txt(txt)
 		labels = model.predict(data)
-		con = txt.split(os.sep)[-1]
-		con = os.path.join(path, con[:-3] + 'con')
-		write_con(con, data, labels)
+		con = os.path.split(txt)[-1]
+		con = con[:-3] + 'con'
+		
+		for t in libml.bits(libml.ALL):
+			if t == libml.SVM:
+				helper.mkpath(os.path.join(args.output, "svm"))
+				con_path = os.path.join(path, "svm", con)
+			if t == libml.LIN:
+				helper.mkpath(os.path.join(args.output, "lin"))
+				con_path = os.path.join(path, "lin", con)
+			if t == libml.CRF:
+				helper.mkpath(os.path.join(args.output, "crf"))
+				con_path = os.path.join(path, "crf", con)
+				
+			write_con(con_path, data, labels[t])
 
 if __name__ == '__main__':
 	main()

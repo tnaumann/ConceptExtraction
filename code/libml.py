@@ -232,7 +232,7 @@ class TelnetWorker(Worker):
 			if str(line).find("Cross") != -1:
 				return float(line.split()[-1][0:-1])
 
-def _bits(n):
+def bits(n):
 	while n:
 		b = n & (~n+1)
 		yield b
@@ -247,7 +247,7 @@ CRF = 2**2
 ALL = sum(2**i for i in range(3))
 
 def train(model_filename, type=ALL):
-	for t in _bits(type):
+	for t in bits(type):
 		if t == SVM:
 			filename = model_filename + ".svm"
 			command = [svm_train, "-c", "50", "-g", "0.03", "-w0", "0.5", filename, filename + ".trained"]
@@ -265,7 +265,7 @@ def train(model_filename, type=ALL):
 		print error
 	
 def predict(model_filename, type=ALL):
-	for t in _bits(type):
+	for t in bits(type):
 		if t == SVM:
 			filename = model_filename + ".svm"
 			command = [svm_predict, filename + ".test.in", filename + ".trained", filename + ".test.out"]
@@ -286,7 +286,7 @@ def predict(model_filename, type=ALL):
 					f.write(line + "\n")
 		
 def write_features(model_filename, rows, labels, type=ALL):
-	for t in _bits(type):
+	for t in bits(type):
 		if t == SVM:
 			file_suffix = ".svm" + (".test.in" if not labels else "")
 			null_label, feature_sep, sentence_sep = "-1", ":", ""
@@ -319,3 +319,21 @@ def write_features(model_filename, rows, labels, type=ALL):
 					f.write("\t".join(line).strip() + "\n")
 				
 				f.write(sentence_sep)
+				
+def read_labels(model_filename, type=ALL):
+	labels = {}
+	for t in bits(type):
+		if t == SVM:
+			filename = model_filename + ".svm.test.out"
+		
+		if t == LIN:
+			filename = model_filename + ".lin.test.out"
+		
+		if t == CRF:
+			filename = model_filename + ".crf.test.out"
+			
+		with open(filename) as f:
+			lines = f.readlines()
+		labels[t] = [line.strip() for line in lines]
+		
+	return labels
