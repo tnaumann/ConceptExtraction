@@ -10,7 +10,7 @@ from subprocess import *
 from model import Model
 
 # Parameterization
-n = 0
+n = 1
 _TEST = True
 
 ###############################################################################
@@ -115,7 +115,7 @@ print
 def evaluate(cmd_features):
 	cmd = ["python", our_evaluate]
 	cmd += ["-c", os.path.join(model_path, "-".join(cmd_features), "test_predictions")]
-	cmd += ["-o", os.path.join(mode_path, "-".join(cmd_features), "evaluation.txt")]
+	cmd += ["-o", os.path.join(model_path, "-".join(cmd_features), "evaluation.txt")]
 	if _TEST:
 		cmd += ["-t", os.path.join(data_path, "concept_assertion_relation_training_data", "merged", "txt", "record-105.txt")]
 		cmd += ["-r", os.path.join(data_path, "concept_assertion_relation_training_data", "merged", "concept")]

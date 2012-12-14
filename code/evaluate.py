@@ -28,8 +28,20 @@ def main():
 		dest = "ref",
 		default = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../data/reference_standard_for_test_data/concepts/')
 	)
+	
+	parser.add_argument("-o",
+		help = "Write the evaluation to a file rather than STDOUT",
+		dest = "output",
+		default = None
+	)
 
 	args = parser.parse_args()
+	
+	# output
+	if args.output:
+		args.output = open(args.output, "w")
+	else:
+		args.output = sys.stdout
 
 	txt_files = glob.glob(args.txt)
 	ref_files = os.listdir(args.ref)
@@ -69,19 +81,19 @@ def main():
 
 
 		# Display the confusion matrix
-		print
-		print
-		print
-		print "================"
-		print directory_name.upper() + " RESULTS" 
-		print "================"
-		print
-		print "Confusion Matrix"
+		print >>args.output, ""
+		print >>args.output, ""
+		print >>args.output, ""
+		print >>args.output, "================"
+		print >>args.output, directory_name.upper() + " RESULTS" 
+		print >>args.output, "================"
+		print >>args.output, ""
+		print >>args.output, "Confusion Matrix"
 		pad = max(len(l) for l in labels)
-		print "%s %s" % (' ' * pad, "\t".join(Model.labels.keys()))
+		print >>args.output, "%s %s" % (' ' * pad, "\t".join(Model.labels.keys()))
 		for act, act_v in labels.items():
-			print "%s %s" % (act.rjust(pad), "\t".join([str(confusion[act_v][pre_v]) for pre, pre_v in labels.items()]))
-		print
+			print >>args.output, "%s %s" % (act.rjust(pad), "\t".join([str(confusion[act_v][pre_v]) for pre, pre_v in labels.items()]))
+		print >>args.output, ""
 		
 		
 
@@ -96,8 +108,8 @@ def main():
 		fn = 0
 		tn = 0
 
-		print "Analysis"
-		print " " * pad, "Precision\tRecall\tF1"
+		print >>args.output, "Analysis"
+		print >>args.output, " " * pad, "Precision\tRecall\tF1"
 
 		
 
@@ -111,16 +123,16 @@ def main():
 			recall += [float(tp) / (tp + fn + 1e-100)]
 			specificity += [float(tn) / (tn + fp + 1e-100)]
 			f1 += [float(2 * tp) / (2 * tp + fp + fn + 1e-100)]
-			print "%s %.4f\t%.4f\t%.4f" % (lab.rjust(pad), precision[-1], recall[-1], f1[-1])
+			print >>args.output, "%s %.4f\t%.4f\t%.4f" % (lab.rjust(pad), precision[-1], recall[-1], f1[-1])
 
-		print "--------"
+		print >>args.output, "--------"
 
 		precision = sum(precision) / len(precision)
 		recall = sum(recall) / len(recall)
 		specificity = sum(specificity) / len(specificity)
 		f1 = sum(f1) / len(f1)
 
-		print "Average: %.4f\t%.4f\t%.4f\t%.4f" % (precision, recall, specificity, f1)
+		print >>args.output, "Average: %.4f\t%.4f\t%.4f\t%.4f" % (precision, recall, specificity, f1)
 	
 if __name__ == '__main__':
 	main()
