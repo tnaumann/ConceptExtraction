@@ -7,17 +7,20 @@ import re
 import subprocess
 import sys
 import nltk
+import nltk.corpus.reader
 import nltk.stem
 import helper
 
 from sets import Set
 from sets import ImmutableSet
 
+from wordshape import *
+
 import libml
 
 class Model:
 	sentence_features = ImmutableSet(["pos", "stem_wordnet"])
-	word_features = ImmutableSet(["word", "length", "mitre", "stem_porter", "stem_lancaster", "stem_snowball"])
+	word_features = ImmutableSet(["word", "length", "mitre", "stem_porter", "stem_lancaster", "stem_snowball", "word_shape"])
 	
 	labels = {
 		"none":0,
@@ -96,15 +99,29 @@ class Model:
 		for word in sentence:
 			features_list.append(self.features_for_word(word))
 
+		tags = None
 		for feature in Model.sentence_features:
 			if feature not in self.enabled_features:
 				continue
 
 			if feature == "pos":
-				tags = nltk.pos_tag(sentence)
+				tags = tags or nltk.pos_tag(sentence)
 				for index, features in enumerate(features_list):
 					tag = tags[index][1]
-					features[("pos", tag)] = 1
+					features[(feature, tag)] = 1
+					
+			if feature == "stem_wordnet":
+				tags = tags or nltk.pos_tag(sentence)
+				morphy_tags = {
+					'NN':nltk.corpus.reader.wordnet.NOUN,
+					'JJ':nltk.corpus.reader.wordnet.ADJ,
+					'VB':nltk.corpus.reader.wordnet.VERB,
+					'RB':nltk.corpus.reader.wordnet.ADV}
+				morphy_tags = [(w, morphy_tags.setdefault(t[:2], nltk.corpus.reader.wordnet.NOUN)) for w,t in tags]
+				st = nltk.stem.WordNetLemmatizer()
+				for index, features in enumerate(features_list):
+					tag = morphy_tags[index]
+					features[(feature, st.lemmatize(*tag))] = 1
 
 		return features_list
 
@@ -137,6 +154,12 @@ class Model:
 			if feature == "stem_snowball":
 				st = nltk.stem.SnowballStemmer("english")
 				features[(feature, st.stem(word))] = 1
+                
+			if feature == "word_shape":
+			    wordShapes = getWordShapes(word)
+			    for i, shape in enumerate(wordShapes):
+			        features[(feature + str(i), shape)] = 1
+                
 
 		return features
 
@@ -163,7 +186,7 @@ class Model:
 	
 	def is_test_result (self, context):
 		# note: make spaces optional? 
-		regex = r"^[A-Za-z]+( )*(-|--:|was|of|\*|>|<|more than|less than)( )*[0-9]+(%)*$"
+		regex = r"^[A-Za-z]+( )*(-|--|:|was|of|\*|>|<|more than|less than)( )*[0-9]+(%)*$"
 		if not re.search(regex, context):
 			return r"^[A-Za-z]+ was (positive|negative)$"
 		return True
