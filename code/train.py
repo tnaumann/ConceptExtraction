@@ -103,11 +103,7 @@ def main():
 
 	if args.enabled_features != None:
 		model.enabled_features = Set(args.enabled_features)		
-
-
-	print model.enabled_features
-
-	sys.exit()
+	
 
 	model.train(data, labels)
 
