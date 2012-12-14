@@ -151,4 +151,69 @@ class Model:
 		"HASDASHNUMALPHA" : r"^.*[A-z].*-.*[0-9].*$ | *.[0-9].*-.*[0-9].*$",
 		"DATESEPERATOR" : r"^[-/]$",
 	}
+    
+    def is_test_result (self, context):
+        # note: make spaces optional? 
+        regex = r"^[A-Za-z]+( )*(-|--|—|:|was|of|\*|>|<|more than|less than)( )*[0-9]+(%)*$"
+        if not re.search(regex, context):
+            return r"^[A-Za-z]+ was (positive|negative)$"
+        return True
+
+    def is_weight (self, word):
+        regex = r"^[0-9]*(mg|g|milligrams|grams)$"
+        return re.search(regex, word)
+        
+    def is_size (self, word): 
+        regex = r"^[0-9]*(mm|cm|millimeters|centimeters)$"
+        return re.search(regex, word)
+
+    def is_prognosis_location (self, word):
+        regex = r"^(c|C)[0-9]+(-(c|C)[0-9]+)*$"
+        return re.search(regex, word)
+    
+    def has_problem_form (self, word):
+         regex = r"^[A-Za-z]+(ic|is)$"
+         return re.search(regex, word)
+        
+    test_terms = {
+        "eval", "evaluation", "evaluations",
+        "sat", "sats", "saturation", 
+        "exam", "exams", 
+        "rate", "rates",
+        "test", "tests", 
+        "xray", "xrays", 
+        "screen", "screens", 
+        "level", "levels",
+        "tox"
+    }
+    
+    problem_terms = {
+        "swelling", 
+        "wound", "wounds", 
+        "symptom", "symptoms", 
+        "shifts", "failure", 
+        "insufficiency", "insufficiencies",
+        "mass", "masses", 
+        "aneurysm", "aneurysms",
+        "ulcer", "ulcers",
+        "trama", "cancer",
+        "disease", "diseased",
+        "bacterial", "viral",
+        "syndrome", "syndromes",
+        "pain", "pains"
+        "burns", "burned",
+        "broken", "fractured"
+    }
+    
+    treatment_terms = {
+        "therapy", 
+        "replacement",
+        "anesthesia",
+        "supplement", "supplemental",
+        "vaccine", "vaccines"
+        "dose", "doses",
+        "shot", "shots",
+        "medication", "medicine",
+        "treament", "treatments"
+    }
 	
