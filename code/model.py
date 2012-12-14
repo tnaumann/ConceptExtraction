@@ -7,6 +7,7 @@ import re
 import subprocess
 import sys
 import nltk
+import nltk.stem
 import helper
 
 from sets import Set
@@ -15,8 +16,8 @@ from sets import ImmutableSet
 import libml
 
 class Model:
-	sentence_features = ImmutableSet(["pos"])
-	word_features = ImmutableSet(["word", "length", "mitre"])
+	sentence_features = ImmutableSet(["pos", "stem_wordnet"])
+	word_features = ImmutableSet(["word", "length", "mitre", "stem_porter", "stem_lancaster", "stem_snowball"])
 	
 	labels = {
 		"none":0,
@@ -123,6 +124,18 @@ class Model:
 				for f in Model.mitre_features:
 					if re.search(Model.mitre_features[f], word):
 						features[(feature, f)] = 1
+						
+			if feature == "stem_porter":
+				st = nltk.stem.PorterStemmer()
+				features[(feature, st.stem(word))] = 1
+				
+			if feature == "stem_lancaster":
+				st = nltk.stem.LancasterStemmer()
+				features[(feature, st.stem(word))] = 1
+				
+			if feature == "stem_snowball":
+				st = nltk.stem.SnowballStemmer("english")
+				features[(feature, st.stem(word))] = 1
 
 		return features
 
