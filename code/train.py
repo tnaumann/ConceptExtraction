@@ -16,13 +16,13 @@ def main():
 	parser.add_argument("-t", 
 		dest = "txt", 
 		help = "The files that contain the training examples",
-		default = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../data/concept_assertion_relation_training_data/beth/txt/*')
+		default = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../data/concept_assertion_relation_training_data/merged/txt/*')
 	)
 	
 	parser.add_argument("-c", 
 		dest = "con", 
 		help = "The files that contain the labels for the training examples",
-		default = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../data/concept_assertion_relation_training_data/beth/concept/*')
+		default = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../data/concept_assertion_relation_training_data/merged/concept/*')
 	)
 	
 	parser.add_argument("-m",
@@ -103,7 +103,7 @@ def main():
 
 	if args.enabled_features != None:
 		model.enabled_features = Set(args.enabled_features)		
-	
+
 
 	model.train(data, labels)
 
