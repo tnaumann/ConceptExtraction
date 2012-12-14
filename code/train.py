@@ -35,7 +35,14 @@ def main():
 		dest = "disabled_features",
 		help = "The features that should not be used",
 		nargs = "+",
-		default = []
+		default = None
+	)
+
+	parser.add_argument("-e",
+		dest = "enabled_features",
+		help = "The features that should be used. This option trumps -d",
+		nargs = "+",
+		default = None
 	)
 
 	parser.add_argument("--no-svm",
@@ -90,7 +97,18 @@ def main():
 	
 	# Train a model on the data and labels
 	model = Model(filename = args.model, type = type)
-	model.enabled_features = model.enabled_features - Set(args.disabled_features)
+	
+	if args.disabled_features != None:
+		model.enabled_features = model.enabled_features - Set(args.disabled_features)
+
+	if args.enabled_features != None:
+		model.enabled_features = Set(args.enabled_features)		
+
+
+	print model.enabled_features
+
+	sys.exit()
+
 	model.train(data, labels)
 
 if __name__ == '__main__':
