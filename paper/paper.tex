@@ -1,32 +1,3 @@
-% THIS IS SIGPROC-SP.TEX - VERSION 3.1
-% WORKS WITH V3.2SP OF ACM_PROC_ARTICLE-SP.CLS
-% APRIL 2009
-%
-% It is an example file showing how to use the 'acm_proc_article-sp.cls' V3.2SP
-% LaTeX2e document class file for Conference Proceedings submissions.
-% ----------------------------------------------------------------------------------------------------------------
-% This .tex file (and associated .cls V3.2SP) *DOES NOT* produce:
-%       1) The Permission Statement
-%       2) The Conference (location) Info information
-%       3) The Copyright Line with ACM data
-%       4) Page numbering
-% ---------------------------------------------------------------------------------------------------------------
-% It is an example which *does* use the .bib file (from which the .bbl file
-% is produced).
-% REMEMBER HOWEVER: After having produced the .bbl file,
-% and prior to final submission,
-% you need to 'insert'  your .bbl file into your source .tex file so as to provide
-% ONE 'self-contained' source file.
-%
-% Questions regarding SIGS should be sent to
-% Adrienne Griscti ---> griscti@acm.org
-%
-% Questions/suggestions regarding the guidelines, .tex and .cls files, etc. to
-% Gerald Murray ---> murray@hq.acm.org
-%
-% For tracking purposes - this is V3.1SP - APRIL 2009
-
-% preprint + pagenumbering for page numbers
 \documentclass[preprint]{style}
 \pagenumbering{arabic}
 
@@ -77,7 +48,7 @@ Salman Ahmad\\
 \maketitle
 \begin{abstract}
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. \cite{Wagner73}
+Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. \cite{svm}
 
 
 \end{abstract}
@@ -122,15 +93,19 @@ Talk about multi-class classification
 
 Call out importance of word shape
 
+\subsection{N-gram Features}
+
 \subsection{Dimension Compression}
 
-\subsection{n-gram Features}
+\subsection{Stemming}
 
 \subsection{Parameter Tuning}
 
 \begin{itemize}
 
 \item Grid search and grid search image
+
+\item Include that PNG image from easy.py
 
 \item Cross validation
 
