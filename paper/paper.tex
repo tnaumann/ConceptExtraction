@@ -157,12 +157,15 @@ Certain terms such as those described in 5.2.1 are consistently labeled as "prob
 \end{itemize}
 
 \subsection{Sentence Features}
+Even though the primary goal of our system is to tag concepts at the word level, these individual words often need to be considered in context. Before extracting the word-level features described in 5.2, we first analyze medical records at the sentence level and assign features to our words based on their usage within those sentences.
 
 \subsubsection{Part of Speech}
+A fruitful strategy for any concept extractor is to first tag words with labels indicating their Part of Speech in context. In our case, for example, whether an ambiguous term is used as an adjective versus a noun could distinguish it as part of a test rather than a problem. We used the NTLK max entropy Part of Speech Tagger, which is trained on the Penn TreeBank to tag individual sentences. We then iterate over the returned tags and add these as word-level features, adding another dimension to our feature set for each Part of Speech tag.
 
 \subsubsection{WordNet Lemmatizer}
 
 \subsubsection{Formatted Text}
+When reading through our training data, we noticed that test results are written in a variety of distinct forms that clearly separate these terms from problem or treatment terms. Since test result forms often spent multiple words such was "O2 sat -- 98\%" or "screen was positive". We wrote a series of regular expressions to capture these patterns with the test term as the first term in the sequence. We iterate over each word in the sentence and run our RegEx suite on the inclusive righthand sequence starting from that word. This feature adds only one additional dimension, and improved our CRF F1 test score from .85 to .90 by boosting our test term detection appreciably.
 
 \subsection{N-gram Features}
 
