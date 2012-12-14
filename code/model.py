@@ -19,8 +19,12 @@ from wordshape import *
 import libml
 
 class Model:
-	sentence_features = ImmutableSet(["pos", "stem_wordnet"])
+	sentence_features = ImmutableSet(["pos", "stem_wordnet", "test_result"])
 	word_features = ImmutableSet(["word", "length", "mitre", "stem_porter", "stem_lancaster", "stem_snowball", "word_shape"])
+	# THESE ARE FEATURES I TRIED THAT DON'T LOOK THAT PROMISING
+	# I have some faith in "metric_unit" and "has_problem_form"
+	# "radial_loc" may be too rare and "def_class" could be over fitting
+	# "metric_unit", "radial_loc", "has_problem_form", "def_class"
 	
 	labels = {
 		"none":0,
@@ -122,6 +126,12 @@ class Model:
 				for index, features in enumerate(features_list):
 					tag = morphy_tags[index]
 					features[(feature, st.lemmatize(*tag))] = 1
+					
+			if feature == "test_result":
+				for index, features in enumerate(features_list):
+					right = " ".join([w for w in sentence[index:]])
+					if self.is_test_result(right):
+						features[(feature, None)] = 1
 
 		return features_list
 
@@ -159,7 +169,27 @@ class Model:
 			    wordShapes = getWordShapes(word)
 			    for i, shape in enumerate(wordShapes):
 			        features[(feature + str(i), shape)] = 1
-                
+					
+			if feature == "metric_unit":
+				unit = 0
+				if self.is_weight(word):
+					unit = 1
+				elif self.is_size(word):
+					unit = 2
+				features[(feature, None)] = unit
+			
+			# look for prognosis locaiton
+			#if feature == "radial_loc":
+			# THIS MIGHT BE BUGGED
+			#	if self.is_prognosis_location(word):
+			#		features[(feature, None)] = 1 
+			
+			if feature == "has_problem_form":
+				if self.has_problem_form(word):
+					features[(feature, None)] = 1
+			
+			if feature == "def_class":
+				features[(feature, None)] = self.get_def_class(word)
 
 		return features
 
@@ -186,9 +216,9 @@ class Model:
 	
 	def is_test_result (self, context):
 		# note: make spaces optional? 
-		regex = r"^[A-Za-z]+( )*(-|--|:|was|of|\*|>|<|more than|less than)( )*[0-9]+(%)*$"
+		regex = r"^[A-Za-z]+( )*(-|--|:|was|of|\*|>|<|more than|less than)( )*[0-9]+(%)*"
 		if not re.search(regex, context):
-			return r"^[A-Za-z]+ was (positive|negative)$"
+			return re.search(r"^[A-Za-z]+ was (positive|negative)", context)
 		return True
 
 	def is_weight (self, word):
@@ -204,48 +234,55 @@ class Model:
 		return re.search(regex, word)
 	
 	def has_problem_form (self, word):
-		 regex = r"^[A-Za-z]+(ic|is)$"
+		 regex = r".*(ic|is)$"
 		 return re.search(regex, word)
-		
-	test_terms = {
-		"eval", "evaluation", "evaluations",
-		"sat", "sats", "saturation", 
-		"exam", "exams", 
-		"rate", "rates",
-		"test", "tests", 
-		"xray", "xrays", 
-		"screen", "screens", 
-		"level", "levels",
-		"tox"
-	}
 	
-	problem_terms = {
-		"swelling", 
-		"wound", "wounds", 
-		"symptom", "symptoms", 
-		"shifts", "failure", 
-		"insufficiency", "insufficiencies",
-		"mass", "masses", 
-		"aneurysm", "aneurysms",
-		"ulcer", "ulcers",
-		"trama", "cancer",
-		"disease", "diseased",
-		"bacterial", "viral",
-		"syndrome", "syndromes",
-		"pain", "pains"
-		"burns", "burned",
-		"broken", "fractured"
-	}
-	
-	treatment_terms = {
-		"therapy", 
-		"replacement",
-		"anesthesia",
-		"supplement", "supplemental",
-		"vaccine", "vaccines"
-		"dose", "doses",
-		"shot", "shots",
-		"medication", "medicine",
-		"treament", "treatments"
-	}
+	# checks for a definitive classification at the word level
+	def get_def_class (self, word):
+		test_terms = {
+			"eval", "evaluation", "evaluations",
+			"sat", "sats", "saturation", 
+			"exam", "exams", 
+			"rate", "rates",
+			"test", "tests", 
+			"xray", "xrays", 
+			"screen", "screens", 
+			"level", "levels",
+			"tox"
+		}
+		problem_terms = {
+			"swelling", 
+			"wound", "wounds", 
+			"symptom", "symptoms", 
+			"shifts", "failure", 
+			"insufficiency", "insufficiencies",
+			"mass", "masses", 
+			"aneurysm", "aneurysms",
+			"ulcer", "ulcers",
+			"trama", "cancer",
+			"disease", "diseased",
+			"bacterial", "viral",
+			"syndrome", "syndromes",
+			"pain", "pains"
+			"burns", "burned",
+			"broken", "fractured"
+		}
+		treatment_terms = {
+			"therapy", 
+			"replacement",
+			"anesthesia",
+			"supplement", "supplemental",
+			"vaccine", "vaccines"
+			"dose", "doses",
+			"shot", "shots",
+			"medication", "medicine",
+			"treament", "treatments"
+		}
+		if word.lower() in test_terms:
+			return 1
+		elif word.lower() in problem_terms:
+			return 2
+		elif word.lower() in treatment_terms:
+			return 3
+		return 0
 	
