@@ -4,6 +4,7 @@ import sys
 import glob
 import argparse
 import helper
+import libml
 
 from sets import Set
 from model import Model
@@ -30,6 +31,31 @@ def main():
 		default = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../model/awesome.model')
 	)
 
+	parser.add_argument("-d",
+		dest = "disabled_features",
+		help = "The features that should not be used",
+		nargs = "+",
+		default = []
+	)
+
+	parser.add_argument("--no-svm",
+		dest = "no_svm",
+		action = "store_true",
+		help = "Disable SVM model generation",
+	)
+
+	parser.add_argument("--no-lin",
+		dest = "no_lin",
+		action = "store_true",
+		help = "Disable LIN model generation",
+	)
+
+	parser.add_argument("--no-crf",
+		dest = "no_crf",
+		action = "store_true",
+		help = "Disable CRF model generation",
+	)
+
 	args = parser.parse_args()
 
 	training_list = []
@@ -43,19 +69,16 @@ def main():
 		if k in con_files_map:
 			training_list.append((txt_files_map[k], con_files_map[k]))
 
+	type = 0
+	if not args.no_svm:
+		type = type | libml.SVM
 
-	## Locate all the training files
-	#files = []
-	#for h in ['beth', 'partners']:
-	#	path = os.path.join('data/concept_assertion_relation_training_data/', h)
-	#	
-	#	txts = os.listdir(os.path.join(path, 'txt'))
-	#	cons = os.listdir(os.path.join(path, 'concept'))
-	#	assert "files lined up", all(t[:-3] == c[:-3] for t, c in zip(txts, cons))
-	#	
-	#	txts = map(lambda f: os.path.join(path, 'txt', f), txts)
-	#	cons = map(lambda f: os.path.join(path, 'concept', f), cons)
-	#	files += zip(txts, cons)
+	if not args.no_lin:
+		type = type | libml.LIN
+	
+	if not args.no_crf:
+		type = type | libml.CRF
+
 	
 	# Get data and labels from files
 	data = []
@@ -66,7 +89,8 @@ def main():
 		labels += read_con(con, datum)
 	
 	# Train a model on the data and labels
-	model = Model(filename = args.model)
+	model = Model(filename = args.model, type = type)
+	model.enabled_features = model.enabled_features - Set(args.disabled_features)
 	model.train(data, labels)
 
 if __name__ == '__main__':

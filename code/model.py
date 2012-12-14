@@ -7,6 +7,7 @@ import re
 import subprocess
 import sys
 import nltk
+import nltk.corpus.reader
 import nltk.stem
 import helper
 
@@ -36,11 +37,12 @@ class Model:
 			helper.mkpath(model_directory)
 
 		self.filename = filename
+		self.type = type
 		self.vocab = {}
-
+		
 		self.enabled_features = Model.sentence_features | Model.word_features
 	
-	def train(self, data, labels, type=libml.ALL):
+	def train(self, data, labels):
 		rows = []
 		for sentence in data:
 			rows.append(self.features_for_sentence(sentence))
@@ -57,15 +59,15 @@ class Model:
 		feat_lu = lambda f: {self.vocab[item]:f[item] for item in f}
 		rows = [map(feat_lu, x) for x in rows]
 		
-		libml.write_features(self.filename, rows, labels, type)
+		libml.write_features(self.filename, rows, labels, self.type)
 
 		with open(self.filename, "w") as model:
 			pickle.dump(self, model)
 
-		libml.train(self.filename, type)
+		libml.train(self.filename, self.type)
 
 		
-	def predict(self, data, type=libml.ALL):
+	def predict(self, data):
 		with open(self.filename) as model:
 			self = pickle.load(model)
 		
@@ -75,11 +77,11 @@ class Model:
 
 		feat_lu = lambda f: {self.vocab[item]:f[item] for item in f if item in self.vocab}
 		rows = [map(feat_lu, x) for x in rows]
-		libml.write_features(self.filename, rows, None, type);
+		libml.write_features(self.filename, rows, None, self.type);
 
-		libml.predict(self.filename, type)
+		libml.predict(self.filename, self.type)
 		
-		labels_list = libml.read_labels(self.filename, type)
+		labels_list = libml.read_labels(self.filename, self.type)
 		
 		for t, labels in labels_list.items():
 			tmp = []
@@ -97,15 +99,29 @@ class Model:
 		for word in sentence:
 			features_list.append(self.features_for_word(word))
 
+		tags = None
 		for feature in Model.sentence_features:
 			if feature not in self.enabled_features:
 				continue
 
 			if feature == "pos":
-				tags = nltk.pos_tag(sentence)
+				tags = tags or nltk.pos_tag(sentence)
 				for index, features in enumerate(features_list):
 					tag = tags[index][1]
-					features[("pos", tag)] = 1
+					features[(feature, tag)] = 1
+					
+			if feature == "stem_wordnet":
+				tags = tags or nltk.pos_tag(sentence)
+				morphy_tags = {
+					'NN':nltk.corpus.reader.wordnet.NOUN,
+					'JJ':nltk.corpus.reader.wordnet.ADJ,
+					'VB':nltk.corpus.reader.wordnet.VERB,
+					'RB':nltk.corpus.reader.wordnet.ADV}
+				morphy_tags = [(w, morphy_tags.setdefault(t[:2], nltk.corpus.reader.wordnet.NOUN)) for w,t in tags]
+				st = nltk.stem.WordNetLemmatizer()
+				for index, features in enumerate(features_list):
+					tag = morphy_tags[index]
+					features[(feature, st.lemmatize(*tag))] = 1
 
 		return features_list
 
