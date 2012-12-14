@@ -110,7 +110,7 @@ def wordShapeDan1(s):
     if (lower):
         return "ALL-LOWER"
     if (mixed):
-        return "MIXED-if wordShaper =="
+        return "MIXED-CASE"
     return "OTHER"
 
 

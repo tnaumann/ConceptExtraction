@@ -19,7 +19,7 @@ from wordshape import *
 import libml
 
 class Model:
-	sentence_features = ImmutableSet(["pos", "stem_wordnet", "test_result"])
+	sentence_features = ImmutableSet(["pos", "stem_wordnet", "test_result", "prev", "next"])
 	word_features = ImmutableSet(["word", "length", "mitre", "stem_porter", "stem_lancaster", "stem_snowball", "word_shape"])
 	# THESE ARE FEATURES I TRIED THAT DON'T LOOK THAT PROMISING
 	# I have some faith in "metric_unit" and "has_problem_form"
@@ -110,8 +110,8 @@ class Model:
 
 			if feature == "pos":
 				tags = tags or nltk.pos_tag(sentence)
-				for index, features in enumerate(features_list):
-					tag = tags[index][1]
+				for i, features in enumerate(features_list):
+					tag = tags[i][1]
 					features[(feature, tag)] = 1
 					
 			if feature == "stem_wordnet":
@@ -123,8 +123,8 @@ class Model:
 					'RB':nltk.corpus.reader.wordnet.ADV}
 				morphy_tags = [(w, morphy_tags.setdefault(t[:2], nltk.corpus.reader.wordnet.NOUN)) for w,t in tags]
 				st = nltk.stem.WordNetLemmatizer()
-				for index, features in enumerate(features_list):
-					tag = morphy_tags[index]
+				for i, features in enumerate(features_list):
+					tag = morphy_tags[i]
 					features[(feature, st.lemmatize(*tag))] = 1
 					
 			if feature == "test_result":
@@ -133,6 +133,30 @@ class Model:
 					if self.is_test_result(right):
 						features[(feature, None)] = 1
 
+					
+		ngram_features = [{} for i in range(len(features_list))]
+		if "prev" in self.enabled_features:
+			prev = lambda f: {("prev_"+k[0], k[1]): v for k,v in f.items()}
+			prev_list = map(prev, features_list)
+			for i in range(len(features_list)):
+				if i == 0:
+					ngram_features[i][("prev", "*")] = 1
+				else:
+					ngram_features[i].update(prev_list[i-1])
+				
+		if "next" in self.enabled_features:
+			next = lambda f: {("next_"+k[0], k[1]): v for k,v in f.items()}
+			next_list = map(next, features_list)
+			for i in range(len(features_list)):
+				if i == len(features_list) - 1:
+					ngram_features[i][("next", "*")] = 1
+				else:
+					ngram_features[i].update(next_list[i+1])
+		
+		merged = lambda d1, d2: dict(d1.items() + d2.items())
+		features_list = [merged(features_list[i], ngram_features[i]) 
+			for i in range(len(features_list))]
+		
 		return features_list
 
 	def features_for_word(self, word):
