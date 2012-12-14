@@ -19,8 +19,12 @@ from wordshape import *
 import libml
 
 class Model:
-	sentence_features = ImmutableSet(["pos", "stem_wordnet"])
-	word_features = ImmutableSet(["word", "length", "mitre", "stem_porter", "stem_lancaster", "stem_snowball", "word_shape", "radial_loc", "has_problem_form", "def_class"])
+	sentence_features = ImmutableSet(["pos", "stem_wordnet", "test_result"])
+	word_features = ImmutableSet(["word", "length", "mitre", "stem_porter", "stem_lancaster", "stem_snowball", "word_shape"])
+	# THESE ARE FEATURES I TRIED THAT DON'T LOOK THAT PROMISING
+	# I have some faith in "metric_unit" and "has_problem_form"
+	# "radial_loc" may be too rare and "def_class" could be over fitting
+	# "metric_unit", "radial_loc", "has_problem_form", "def_class"
 	
 	labels = {
 		"none":0,
@@ -122,6 +126,12 @@ class Model:
 				for index, features in enumerate(features_list):
 					tag = morphy_tags[index]
 					features[(feature, st.lemmatize(*tag))] = 1
+					
+			if feature == "test_result":
+				for index, features in enumerate(features_list):
+					right = " ".join([w for w in sentence[index:]])
+					if self.is_test_result(right):
+						features[(feature, None)] = 1
 
 		return features_list
 
@@ -170,6 +180,7 @@ class Model:
 			
 			# look for prognosis locaiton
 			#if feature == "radial_loc":
+			# THIS MIGHT BE BUGGED
 			#	if self.is_prognosis_location(word):
 			#		features[(feature, None)] = 1 
 			
@@ -205,9 +216,9 @@ class Model:
 	
 	def is_test_result (self, context):
 		# note: make spaces optional? 
-		regex = r"^[A-Za-z]+( )*(-|--|:|was|of|\*|>|<|more than|less than)( )*[0-9]+(%)*$"
+		regex = r"^[A-Za-z]+( )*(-|--|:|was|of|\*|>|<|more than|less than)( )*[0-9]+(%)*"
 		if not re.search(regex, context):
-			return r"^[A-Za-z]+ was (positive|negative)$"
+			return re.search(r"^[A-Za-z]+ was (positive|negative)", context)
 		return True
 
 	def is_weight (self, word):
