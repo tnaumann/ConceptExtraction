@@ -224,7 +224,17 @@ We built a fairly comprehensive framework for applying machine learning techniqu
 
 \subsubsection{Data Formats and File I/O}
 
+Our framework consists of many convenience functions and utilities classes that are designed to perform all necessary file I/O operations formatting output data and parsing input files. There are 3 formats that the code base handles. 
+
+The first format is a straight forward tokenized text file that contains each sentence on a separate line. The test data for training the models were processed into this format. For cases where the sentence was not previously tokenized, the framework utilizes {\tt nltk}'s {\tt sent\_tokenize}  to break a string into sentences and then {\tt nltk}'s {\tt word\_tokenize} to break each sentence into normalized tokens.
+
+The second format is an annotation format that references the tokenized text files and associates a classification label (``problem'', ``tests'', ``treatment'' or ``none'') with spans of words. This format is used in a separate file than the actual input tokenized text file but the two files typically share the same name so we can tell which labels apply to which input. The training and test data sets use this format to represent the ground truth classification of the medical records.
+
+The third and last format is is a sparse matrix format that is utilized by the various command-line utilizes in the code base. Conceptually, the rows in this sparse matrix represent an a single data item (in our case, a single word) that either is a training example or is an input token that needs to a label predicted and the columns represent the various features of that item. The various learning algorithms all use this data format.
+
 \subsubsection{Feature Computation}
+
+The framework has a flexible and robust mechanism for computing features on input tokens. 
 
 \subsubsection{Model Encapsulation and Serialization}
 
@@ -236,7 +246,7 @@ We built a fairly comprehensive framework for applying machine learning techniqu
 
 \subsection{Web Service}
 
-In addition to the various command line utilizes described in the previous section our system also includes a Web-based service that allows users to manually input a single sentence, select a model to use for prediction, and see the predicted labels that model generated for the input. Figure~\ref{fig:web_interface} shows a screenshot of the Web interface in use.
+In addition to the various command line utilizes described in the previous section our system also includes a Web-based service that allows users to manually input a single sentence, select a model to use for prediction, and see the predicted labels that model generated for the input.
 
 The Web service was written in Python and directly interoperates with the rest of the code base. To run the Web applications simply execute the {\tt web.py} file in the source tree. The Web app assumes that models have already been trained and placed into ``models'' directory in the source tree. By default, the application will host itself on port 5000. You can also see a live version of the Web service at:
 
