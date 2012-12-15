@@ -213,7 +213,7 @@ TODO(SAM):
 \begin{center}
 	\includegraphics[width=1\columnwidth]{figures/system.png}
 \end{center}
-\caption{An overview of the system and codebase.}
+\caption{An overview of the system and codebase. TODO (SAL): Add the actual system diagram image.}
 \label{fig:system}
 \end{figure}
 
@@ -232,13 +232,17 @@ The second format is an annotation format that references the tokenized text fil
 
 The third and last format is is a sparse matrix format that is utilized by the various command-line utilizes in the code base. Conceptually, the rows in this sparse matrix represent an a single data item (in our case, a single word) that either is a training example or is an input token that needs to a label predicted and the columns represent the various features of that item. The various learning algorithms all use this data format.
 
-\subsubsection{Feature Computation}
-
-The framework has a flexible and robust mechanism for computing features on input tokens. 
-
 \subsubsection{Model Encapsulation and Serialization}
 
+Our framework includes a model class that can be trained on certain data with certain features enabled. The model class supports training a libSVM, libLinear, and CRF classifier that can be used for prediction in the future. One of the nice things, about the model class is that it can be serialized and reloaded dynamically. This is a really nice capability because it allows you to train a large number of models on various subsets of the dat and using various different features to see which perform the best.
+
+\subsubsection{Feature Computation}
+
+The framework has a flexible and robust mechanism for computing features on input tokens. Features are implemented as a simple conditional statement in a large {\tt if-else} statement, making it really easy to add new features to the system. Additionally, each model maintains a list of the features that are enabled. Only the enabled features will be executed and computed on the input tokens. Features can be enabled or disabled pragmatically by removing them from the model's feature list. This ability is really important when training models because it enables you to easily explore the impact of certain features and run feature selection.
+
 \subsubsection{Learning Algorithms}
+
+As mentioned previously, the framework's model class has support for training various classifiers: a Support Vector Machine, a CRF, and linear classifier. The implementation of these algorithms is delegates to various third-party libraries described below.
 
 \subsubsection{Data Organization and Directory Structure}
 
@@ -246,15 +250,16 @@ The framework has a flexible and robust mechanism for computing features on inpu
 
 \subsection{Web Service}
 
-In addition to the various command line utilizes described in the previous section our system also includes a Web-based service that allows users to manually input a single sentence, select a model to use for prediction, and see the predicted labels that model generated for the input.
+In addition to the various command line utilizes described in the previous section our system also includes a Web-based service that allows users to manually input a single sentence, select a model to use for prediction, and see the predicted labels that model generated for the input. Figure~\ref{fig:web_interface} shows a screenshot of the web application in use.
 
-The Web service was written in Python and directly interoperates with the rest of the code base. To run the Web applications simply execute the {\tt web.py} file in the source tree. The Web app assumes that models have already been trained and placed into ``models'' directory in the source tree. By default, the application will host itself on port 5000. You can also see a live version of the Web service at:
+The Web service was written in Python and directly interoperates with the rest of the code base. To run the Web applications simply execute the {\tt web.py} file in the source tree. The Web app allows you to label a sentence using any of the models that we have previously trained. This is useful for spot checking certain sentences and observing how different models behave. The Web app assumes that models have already been trained and placed into ``models'' directory in the source tree. By default, the application will host itself on port 5000. You can also see a live version of the Web service at:
 
 {\tt http://saahmad.media.mit.edu:5000/ }
 
-\begin{figure}
+\begin{figure}[t]
 \begin{center}
-	\includegraphics[width=1\columnwidth]{figures/web-interface.png}
+	\includegraphics[width=0.75\columnwidth]{figures/web-interface-1.png}
+	\includegraphics[width=0.75\columnwidth]{figures/web-interface-2.png}
 \end{center}
 \caption{The Web application interface that allows users to manually input a sentence and have it labeled using one of the previously-trained models. In this case we are using an SVM model that was trained using all of the features.}
 \label{fig:web_interface}
