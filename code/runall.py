@@ -10,8 +10,8 @@ from subprocess import *
 from model import Model
 
 # Parameterization
-n = 1
-_TEST = True
+n = 0
+_TEST = False
 
 ###############################################################################
 # Utilities
