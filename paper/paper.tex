@@ -82,6 +82,8 @@ In order to utilize traditional machine learning classifiers for natural languag
 
 Using this binary dimension representation results in a high dimensional space (e.g. using a word itself as a feature results in a number of dimensions equal to the size of the vocabulary of the training data). Further, the high dimensional space is exceptionally sparse since each item generally only satisfies one binary dimension for the feature. For non-asymptotic cases found in practice, this generally means that the feature space grows much faster than the amount of data and most of the theoretical guarantees of the traditional machine learning algorithms do not hold.
 
+Further, our best intuition often falls short in high dimensional spaces \cite{dimensions}. So it is difficult to generalize the utility of a feature to the entire data set even if it appears to be relevant for a handful of documents.
+
 \subsection{Biased Data}
 Many machine learning classifiers assume relatively balanced data with respect to the class labels available. However, in the task of concept extraction it is most often the case that there is a null concept class indicating that the token is part of no relevant concept which is overwhelmingly more abundant than the concepts. The bias of the class labels in the data presents a challenge because a classifier optimized with respect to accuracy will be inclined to simply assign the null concept class for all labels since that will result in relatively high accuracy. Such classifiers will not, however, perform well with respect to more meaningful measures such as precision, recall, or F1-measure.
 
