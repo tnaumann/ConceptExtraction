@@ -340,7 +340,26 @@ In terms of predicting labels for unseen input, all classifiers performed equall
 
 \subsection{Classification Performance}
 
-A table of a bunch of awesome results. We should present results by model type (SVM, CRF, LIN) and feature set.
+\begin{figure}
+\begin{center}
+	
+\end{center}
+\caption{Results from a model trained on all of the test data with all of the features enabled.}
+\label{fig:all_features_results}
+\end{figure}
+
+
+\begin{figure}
+\begin{center}
+	
+\end{center}
+\caption{A summary of the F1-scores from many different models with different features enabled.}
+\label{fig:summary_f1_scores}
+\end{figure}
+
+Overall we found that our system did a good job at predicting labels for medical notes. Figure~\ref{fig:all_features_results} shows summary statistics as well as a confusion matrix of a model that was trained with all the features enabled. The results are broken down so we can see the relative performance of each of the individual classifiers. Overall, the system does very well and achieves an average F1-score of BLAH.
+
+As mentioned before, we trained a total of 47 classifiers with different features to get an idea for what features were the most important. A summary of the F1-scores of these classifiers is show in Figure~\ref{fig:summary_f1_scores}.
 
 \section{Discussion}
 
