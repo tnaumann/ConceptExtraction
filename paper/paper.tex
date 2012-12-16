@@ -487,14 +487,27 @@ We stopped using libsvms.
 Found that libsvm was not worth while to use
 
 \subsection{Dimension Collapse}
+There are several mechanisms we thought of to to collapse the high dimensional nature of the data. Given unbounded time, we would have liked to try the following.
+
+\begin{itemize}
+\item First, we used stemming to add additional features to each word much in the same way that the word feature was created. However, after performing more complete feature selection we would have liked to select the best suited stemmer and used that in place of the word feature.
+
+\item Depending on the stemmer selected, we may have also added a list of stopwords that mapped to a single dimension in order to gain a dimension saving over ``uninteresting'' words.
+
+\item Next, we would have liked to investigate a dramatic reduction by creating a list of all words that are only tagged with the null concept class and mapped them all to a single dimension.
+\end{itemize}
+
+While the second approach exhibits only a modest reduction (and may be taken care of automatically by some stemmers), the first and third approaches may allow us to dramatically reduce the dimension of the problem. Our hypothesis is that this will certainly improve the runtime performance, and perhaps the classification performance as well.
 
 \subsection{Feature Selection}
+In our work, we performed feature selection in-so-far as we thought of a large number of potential features and then tested their efficacy on a small subset of documents. Further, we generated models from the full set of features as well as each individual feature, and the full set with one held out. While these proved effective for the purposes of analysis, a more exhaustive feature selection is certainly desirable. 
 
 \subsection{Parameter Selection}
+Likewise, we experimented with parameter selection for the SVM classifiers over a reduced data set and were able to obtain dramatic increases in classification performance. Due to the already long runtime of training SVM classifiers, it was not feasible to perform any sort of robust parameter selection for these models. However, we expect that doing so would provide additional gains.
 
 \subsection{More Data}
 
-It goes without saying that having more data is always nice. This is particularly true in our case because we were training on a relatively small data set and testing on a much larger one. In fact, an interesting avenue for future work is to switch our training and testing data sets so we are training on relatively larger data set.
+It goes without saying that having more data is always nice. This is particularly true in our case because we were training on a relatively small data set and testing on a considerably larger one. In fact, an interesting avenue for future work is to switch our training and testing data sets so we are training on relatively larger data set.
 	
 \section{Acknowledgments}
 
