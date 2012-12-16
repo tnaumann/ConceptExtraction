@@ -324,6 +324,36 @@ Our code leveraged various 3rd party libraries for training the models and gener
 
 \subsection{Data Set}
 
+\begin{figure}[t]
+\begin{center}
+\begin{center}
+	\begin{tabular}{|l|l|}
+	\hline
+	\multicolumn{2}{|c|}{\bf Testing Data Set} \\ \hline
+	{\bf Label} & {\bf Count}  \\ \hline
+	test & 17237 \\ \hline
+	none & 202438 \\ \hline
+	 problem & 30276 \\ \hline
+	 treatment & 17298 \\ \hline
+	\end{tabular}
+\end{center}
+
+\begin{center}
+	\begin{tabular}{|l|l|}
+	\hline
+	\multicolumn{2}{|c|}{\bf Training Data Set} \\ \hline
+	{\bf Label} & {\bf Count}  \\ \hline
+	test & 8492 \\ \hline
+	none & 114783 \\ \hline
+	 problem & 17326 \\ \hline
+	 treatment & 8940 \\ \hline
+	\end{tabular}
+\end{center}
+\end{center}
+\caption{The number of each class the in testing and training data sets.}
+\label{fig:data_set_counts}
+\end{figure}
+
 The data set that we used train and test the system came from the i2b2 NLP challenge. As mentioned before, the data was already divided into test and training sets and every word was pre-labeled with the following classes: ``problem'', ``test'', ``treatment'', or ``none''. 
 
 The training data consisted of 170 medical records and the test data consisted of 256 medical records.  The overall size of the data was 10mb. The data all came from Boston-area hospitals and is subject to a data usage agreement.
@@ -407,6 +437,22 @@ treatment & 0.8289 &	0.6365 &	0.7201\\ \hline
 
 \begin{figure}
 \begin{center}
+
+
+
+	\begin{tabular}{|l|l|l|}
+	\hline
+	{\bf Feature Set} & {\bf Classifier} & {\bf F1 Score}  \\ \hline
+
+	
+	
+	
+	
+
+	\end{tabular}
+
+
+
 	
 \end{center}
 \caption{A summary of the F1-scores from many different models with different features enabled.}
