@@ -330,7 +330,11 @@ Overall we trained a total of 23 models using the entire data set. One model was
 
 \subsection{Runtime Performance}
 
-How long each model took to train and how fast we can predict. Also discussion the hardware that was used to train and predict in terms of CPU speed, memory, etc.
+We deployed the system on a machine running Ubuntu 11.10 with a QuadCore AMD Opteron processor running a 2.5Ghz and 48GB of ram.
+
+In general training the liblinear and crfsuite classifiers was pretty quick. Each took around an hour to train on the entire training set. However, the libsvm classifier took approximate 6 hours to train on the same data.
+
+In terms of predicting labels for unseen input, all classifiers performed equally well. They each took around 1 hour to label the entire test data set. However, the vast major of time was spent computing features on the input rather than actually running the classifiers.
 
 \subsection{Classification Performance}
 
