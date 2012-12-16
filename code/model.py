@@ -37,7 +37,9 @@ class Model:
 	@staticmethod
 	def load(filename='awesome.model'):
 		with open(filename) as model:
-			return pickle.load(model)
+			model = pickle.load(model)
+		model.filename = filename
+		return model
 
 	def __init__(self, filename='awesome.model', type=libml.ALL):
 		model_directory = os.path.dirname(filename)
