@@ -346,8 +346,60 @@ In terms of predicting labels for unseen input, all classifiers performed equall
 
 \begin{figure}
 \begin{center}
+	\begin{tabular}{|l|l|l|l|}
+	\hline
+	\multicolumn{4}{|c|}{\bf crfsuite} \\ \hline
+	{\bf Label} & {\bf Precision} & {\bf Recall} & {\bf F1} \\ \hline
 	
+test & 0.8650 &	0.6857 &	0.7650 \\ \hline
+problem & 0.7686 &	0.7492	& 0.7587 \\ \hline
+none & 0.9321 & 	0.9637 &	0.9477 \\ \hline
+treatment  & 0.7911 &	0.6763 &	0.7292 \\ \hline
+	
+	\hline
+	Average: & 0.7512 &	 0.8537 &	0.7891 \\
+	\hline
+	\end{tabular}
 \end{center}
+
+
+\begin{center}
+	\begin{tabular}{|l|l|l|l|}
+	\hline
+	\multicolumn{4}{|c|}{\bf liblinear} \\ \hline
+	{\bf Label} & {\bf Precision} & {\bf Recall} & {\bf F1} \\ \hline
+
+test  & 0.7908 & 0.8347 & 	0.8122 \\ \hline
+problem  & 0.5615 & 	0.9246 &	0.6987 \\ \hline
+none  & 0.9784	& 0.8646 &	0.9180 \\ \hline
+treatment  & 0.6740 &	0.7908	& 0.7278 \\ \hline
+
+	\hline
+	Average: & 0.8392 &	 0.7687  &	0.8001 \\
+	\hline
+	\end{tabular}
+\end{center}
+	
+	
+	
+		
+\begin{center}	
+	\begin{tabular}{|l|l|l|l|}
+	\hline
+	\multicolumn{4}{|c|}{\bf libsvm} \\ \hline
+	{\bf Label} & {\bf Precision} & {\bf Recall} & {\bf F1} \\ \hline
+
+     test & 0.8491 &	0.7392	& 0.7903 \\ \hline
+  problem & 0.7603 &	0.7692 &	0.7647 \\ \hline
+     none & 0.9395	 & 0.9668	& 0.9529 \\ \hline
+treatment & 0.8289 &	0.6365 &	0.7201\\ \hline
+
+	\hline
+	Averages: & 0.8444 &	 0.7779  & 	0.8070 \\
+	\hline
+	\end{tabular}
+\end{center}
+
 \caption{Results from a model trained on all of the test data with all of the features enabled.}
 \label{fig:all_features_results}
 \end{figure}
@@ -361,7 +413,7 @@ In terms of predicting labels for unseen input, all classifiers performed equall
 \label{fig:summary_f1_scores}
 \end{figure}
 
-Overall we found that our system did a good job at predicting labels for medical notes. Figure~\ref{fig:all_features_results} shows summary statistics as well as a confusion matrix of a model that was trained with all the features enabled. The results are broken down so we can see the relative performance of each of the individual classifiers. Overall, the system does very well and achieves an average F1-score of BLAH.
+Overall we found that our system did a good job at predicting labels for medical notes. Figure~\ref{fig:all_features_results} shows summary statistics as well as a confusion matrix of a model that was trained with all the features enabled. The results are broken down so we can see the relative performance of each of the individual classifiers. Overall, the system does very well and achieves an average F1-score of {\bf 0.79}.
 
 As mentioned before, we trained a total of 47 classifiers with different features to get an idea for what features were the most important. A summary of the F1-scores of these classifiers is show in Figure~\ref{fig:summary_f1_scores}.
 
@@ -374,7 +426,7 @@ Be sure to include examples of cool cases where it caught a difficult label
 Be sure to include FAILURE cases
 
 
-We stopped using libSVMs.
+We stopped using libsvms.
 
 
 \section{Conclusion and Future Work}
