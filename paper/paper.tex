@@ -330,26 +330,28 @@ Our code leveraged various 3rd party libraries for training the models and gener
 \begin{figure}[t]
 \begin{center}
 \begin{center}
-	\begin{tabular}{|l|l|}
+	\begin{tabular}{|l|l|l|}
 	\hline
-	\multicolumn{2}{|c|}{\bf Testing Data Set} \\ \hline
-	{\bf Label} & {\bf Count}  \\ \hline
-	test & 17237 \\ \hline
-	none & 202438 \\ \hline
-	 problem & 30276 \\ \hline
-	 treatment & 17298 \\ \hline
+	\multicolumn{3}{|c|}{\bf Training Data Set} \\ \hline
+	{\bf Label} & {\bf Count} & {\bf Percentage} \\ \hline
+	test & 8492 & 5.7\\ \hline
+	none & 114783 & 76.7\\ \hline
+	 problem & 17326 & 11.6\\ \hline
+	 treatment & 8940 & 6.0\\ \hline
+	 {\bf Total} & 149541 & 100\\ \hline
 	\end{tabular}
 \end{center}
 
 \begin{center}
-	\begin{tabular}{|l|l|}
+	\begin{tabular}{|l|l|l|}
 	\hline
-	\multicolumn{2}{|c|}{\bf Training Data Set} \\ \hline
-	{\bf Label} & {\bf Count}  \\ \hline
-	test & 8492 \\ \hline
-	none & 114783 \\ \hline
-	 problem & 17326 \\ \hline
-	 treatment & 8940 \\ \hline
+	\multicolumn{3}{|c|}{\bf Testing Data Set} \\ \hline
+	{\bf Label} & {\bf Count} & {\bf Percentage} \\ \hline
+	test & 17237 & 6.4\\ \hline
+	none & 202438 & 75.8\\ \hline
+	 problem & 30276 & 11.3\\ \hline
+	 treatment & 17298 & 6.5\\ \hline
+	 {\bf Total} & 267249 & 100\\ \hline
 	\end{tabular}
 \end{center}
 \end{center}
@@ -360,7 +362,7 @@ Our code leveraged various 3rd party libraries for training the models and gener
 
 Deidentified clinical records used in this research were provided by the i2b2 National Center for Biomedical Computing funded by U54LM008748 and were originally prepared for the Shared Tasks for Challenges in NLP for Clinical Data organized by Dr. Ozlem Uzuner, i2b2 and SUNY. As mentioned before, the data came divided into training and test sets and every word was pre-labeled with the following classes: ``problem'', ``test'', ``treatment'', or ``none''. 
 
-The overall size of the data was 10mb and came from Boston-area hospitals and is subject to data use agreements. The training data consisted of 170 medical records and the test data consisted of 256 medical records. Further, the distribution over labels of the training and test sets is provided in:
+The overall size of the data was 10mb and came from Boston-area hospitals and is subject to data use agreements. The training data consisted of 170 medical records and the test data consisted of 256 medical records. Further, the distribution over labels of the training and test sets is provided in Figure~\ref{fig:data_set_counts}.
 
 
 
@@ -487,14 +489,27 @@ We stopped using libsvms.
 Found that libsvm was not worth while to use
 
 \subsection{Dimension Collapse}
+There are several mechanisms we thought of to to collapse the high dimensional nature of the data. Given unbounded time, we would have liked to try the following.
+
+\begin{itemize}
+\item First, we used stemming to add additional features to each word much in the same way that the word feature was created. However, after performing more complete feature selection we would have liked to select the best suited stemmer and used that in place of the word feature.
+
+\item Depending on the stemmer selected, we may have also added a list of stopwords that mapped to a single dimension in order to gain a dimension saving over ``uninteresting'' words.
+
+\item Next, we would have liked to investigate a dramatic reduction by creating a list of all words that are only tagged with the null concept class and mapped them all to a single dimension.
+\end{itemize}
+
+While the second approach exhibits only a modest reduction (and may be taken care of automatically by some stemmers), the first and third approaches may allow us to dramatically reduce the dimension of the problem. Our hypothesis is that this will certainly improve the runtime performance, and perhaps the classification performance as well.
 
 \subsection{Feature Selection}
+In our work, we performed feature selection in-so-far as we thought of a large number of potential features and then tested their efficacy on a small subset of documents. Further, we generated models from the full set of features as well as each individual feature, and the full set with one held out. While these proved effective for the purposes of analysis, a more exhaustive feature selection is certainly desirable. 
 
 \subsection{Parameter Selection}
+Likewise, we experimented with parameter selection for the SVM classifiers over a reduced data set and were able to obtain dramatic increases in classification performance. Due to the already long runtime of training SVM classifiers, it was not feasible to perform any sort of robust parameter selection for these models. However, we expect that doing so would provide additional gains.
 
 \subsection{More Data}
 
-It goes without saying that having more data is always nice. This is particularly true in our case because we were training on a relatively small data set and testing on a much larger one. In fact, an interesting avenue for future work is to switch our training and testing data sets so we are training on relatively larger data set.
+It goes without saying that having more data is always nice. This is particularly true in our case because we were training on a relatively small data set and testing on a considerably larger one. In fact, an interesting avenue for future work is to switch our training and testing data sets so we are training on relatively larger data set.
 	
 \section{Acknowledgments}
 
