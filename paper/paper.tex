@@ -75,20 +75,24 @@ Clarification: liblinear is not doing linear regression, the default is L2-regul
 \subsubsection{Conditional Random Fields}
 
 \section{Challenges}
+There are several unique challenges which arise due to the the nature of the dataset and the approach of leveraging traditional machine learning classifiers for natural language.
 
 \subsection{High Dimensionality}
-TK(TJN) 
+In order to utilize traditional machine learning classifiers for natural language processing, it is necessary to generate linguistic features for each item that requires classification. The linguistic features which characterize each item often do not have a meaningful strict ordering (e.g. it is not meaningful to say ``muffin'' $>$ ``bread'' if your feature was the word itself). Therefore, it is necessary to represent each feature without a strict ordering as a binary dimension reflecting the presence or absence of that feature.
+
+Using this binary dimension representation results in a high dimensional space (e.g. using a word itself as a feature results in a number of dimensions equal to the size of the vocabulary of the training data). Further, the high dimensional space is exceptionally sparse since each item generally only satisfies one binary dimension for the feature. For non-asymptotic cases found in practice, this generally means that the feature space grows much faster than the amount of data and most of the theoretical guarantees of the traditional machine learning algorithms do not hold.
 
 \subsection{Biased Data}
-TK(TJN)
+Many machine learning classifiers assume relatively balanced data with respect to the class labels available. However, in the task of concept extraction it is most often the case that there is a null concept class indicating that the token is part of no relevant concept which is overwhelmingly more abundant than the concepts. The bias of the class labels in the data presents a challenge because a classifier optimized with respect to accuracy will be inclined to simply assign the null concept class for all labels since that will result in relatively high accuracy. Such classifiers will not, however, perform well with respect to more meaningful measures such as precision, recall, or F1-measure.
+
 
 \subsection{Amount of Data}
-TK(TJN)
+As with many statistically-grounded projects, there is often only a limited amount of data available. Within the medical domain this holds particularly true due to the expertise (and subsequent cost) required to provide annotation and the inability to easily merge data from multiple sources -- either due to the differing formats in which it is stored/accessed or various legal restraints in place to protect patients.
 
-Low amounts of train data with high amounts of tests data.
+Such dearth of training data means that the amount of test data is often much larger than the amount of training data available. Consequently, it is even more difficult to obtain decent results if the models trained even moderately overfit the training data -- a particular risk due to the sparse distribution of high dimensional items discussed previously.
 
 \subsection{Data Usage Agreements}
-TODO(SAM):
+In addition to limited availability of data, it is often difficult to obtain the data that is relevant. Even for ``open'' data sets such as those provided by the i2b2 National Center for Biomedical Computing, one must sign a data use agreement in order to maintain compliance with the U.S. Health Insurance and Accountability Act (HIPAA) privacy and security rules. The approval process for ``open'' data sets can still take weeks, while access to more controlled data sets can often take months and require security measures such as single physical machine access.
 
 \section{Design}
 
@@ -233,7 +237,7 @@ The third and last format is is a sparse matrix format that is utilized by the v
 
 \subsubsection{Model Encapsulation and Serialization}
 
-Our framework includes a model class that can be trained on certain data with certain features enabled. The model class supports training a libSVM, libLinear, and CRF classifier that can be used for prediction in the future. One of the nice things, about the model class is that it can be serialized and reloaded dynamically. This is a really nice capability because it allows you to train a large number of models on various subsets of the data and using various different features to see which perform the best.
+Our framework includes a model class that can be trained on certain data with certain features enabled. The model class supports training a libsvm, liblinear, and crfsuite classifiers that can be used for prediction in the future. One of the nice things, about the model class is that it can be serialized and reloaded dynamically. This is a really nice capability because it allows you to train a large number of models on various subsets of the data and using various different features to see which perform the best.
 
 \subsubsection{Feature Computation}
 
@@ -241,7 +245,7 @@ The framework has a flexible and robust mechanism for computing features on inpu
 
 \subsubsection{Learning Algorithms}
 
-As mentioned previously, the framework's model class has support for training various classifiers: a Support Vector Machine, a CRF, and linear classifier. The implementation of these algorithms is delegates to various third-party libraries described below.
+As mentioned previously, the framework's model class has support for training various classifiers: a Support Vector Machine, a CRF, and L2-regularized Support Vector Machine. The implementation of these algorithms is delegates to various third-party libraries described below.
 
 \subsubsection{Data Organization and Directory Structure}
 
@@ -258,7 +262,7 @@ The framework supports a default conventional directory structure to know where 
 
 \item {\tt models} - Contains all of the trained models.
 
-\item {\tt models/<model-name>} - Contains the meta data specific to each model that was trained. The framework saves the model's internal state (the features used, the input test set, etc.) as well as the trained parameters for the libSVM, crfsuite, and libLinear classifiers. This information is used to deserialize and load a model at runtime for prediction tasks.
+\item {\tt models/<model-name>} - Contains the meta data specific to each model that was trained. The framework saves the model's internal state (the features used, the input test set, etc.) as well as the trained parameters for the libsvm, crfsuite, and liblinear classifiers. This information is used to deserialize and load a model at runtime for prediction tasks.
 
 \item {\tt models/<model-name>/predictions/} - Contains output files with the predicted label for each word in the input file.
 
@@ -306,9 +310,9 @@ Our code leveraged various 3rd party libraries for training the models and gener
 
 \item {\tt libsvm} \cite{libsvm}: libsvm provides a fast implementation of Support Vector Machines. It includes a command line utility that takes a training data (with all of the features formatted in a sparse matrix representation) as input and outputs a SVM model trained on that data. It also includes a command line utility that allows users to specify a desired model and predict the classes on new input. Our code base forks process calls to these utilities to train SVM models, although a lot of the parameter tuning and feature selection is handled elsewhere in our codebase.
 
-\item {\tt liblinear} \cite{liblinear}: lib linear is a linear classifier library that has special support multi-class classification. It also provides easy to use training and predicting command line utilities that accept a similar input format as libsvm.
+\item {\tt liblinear} \cite{liblinear}: liblinear is a linear classifier library that has special support multi-class classification. It also provides easy to use training and predicting command line utilities that accept a similar input format as libsvm.
 
-\item {\tt crfsuite} \cite{crfsuite}: crfsuite is an implementation for conditional random fields and includes command line front ends to train a model on data and to predict the labels on an unseen data set. The data format for the input training files is also a sparse matrix representation but is slightly different from the format used by libsvm and lib linear. Our codebase nicely abstracts out these format differences and produces the right format depending on the model in use.
+\item {\tt crfsuite} \cite{crfsuite}: crfsuite is an implementation for conditional random fields and includes command line front ends to train a model on data and to predict the labels on an unseen data set. The data format for the input training files is also a sparse matrix representation but is slightly different from the format used by libsvm and liblinear. Our codebase nicely abstracts out these format differences and produces the right format depending on the model in use.
 
 \item {\tt nltk} \cite{nltk}: nltk is a very popular NLP library written in Python. We leverage nltk to generate some of the features on our data. In particular, we utilize nltk's maximum-entropy part-of-speech tagging as well as many of its stemming algorithms.
 
@@ -321,21 +325,147 @@ Our code leveraged various 3rd party libraries for training the models and gener
 
 \subsection{Data Set}
 
-The data set that we used train and test the system came from the i2b2 NLP challenge. As mentioned before, the data was already divided into test and training sets and every word was pre-labeled with the following classes: ``problem'', ``test'', ``treatment'', or ``none''. 
+\begin{figure}[t]
+\begin{center}
+\begin{center}
+	\begin{tabular}{|l|l|}
+	\hline
+	\multicolumn{2}{|c|}{\bf Testing Data Set} \\ \hline
+	{\bf Label} & {\bf Count}  \\ \hline
+	test & 17237 \\ \hline
+	none & 202438 \\ \hline
+	 problem & 30276 \\ \hline
+	 treatment & 17298 \\ \hline
+	\end{tabular}
+\end{center}
 
-The training data consisted of 170 medical records and the test data consisted of 256 medical records.  The overall size of the data was 10mb. The data all came from Boston-area hospitals and is subject to a data usage agreement.
+\begin{center}
+	\begin{tabular}{|l|l|}
+	\hline
+	\multicolumn{2}{|c|}{\bf Training Data Set} \\ \hline
+	{\bf Label} & {\bf Count}  \\ \hline
+	test & 8492 \\ \hline
+	none & 114783 \\ \hline
+	 problem & 17326 \\ \hline
+	 treatment & 8940 \\ \hline
+	\end{tabular}
+\end{center}
+\end{center}
+\caption{The number of each class the in testing and training data sets.}
+\label{fig:data_set_counts}
+\end{figure}
+
+
+Deidentified clinical records used in this research were provided by the i2b2 National Center for Biomedical Computing funded by U54LM008748 and were originally prepared for the Shared Tasks for Challenges in NLP for Clinical Data organized by Dr. Ozlem Uzuner, i2b2 and SUNY. As mentioned before, the data came divided into training and test sets and every word was pre-labeled with the following classes: ``problem'', ``test'', ``treatment'', or ``none''. 
+
+The overall size of the data was 10mb and came from Boston-area hospitals and is subject to data use agreements. The training data consisted of 170 medical records and the test data consisted of 256 medical records. Further, the distribution over labels of the training and test sets is provided in:
+
+
 
 \subsection{Trained Models}
 
-Overall we trained a total of 23 models using the entire data set. One model was trained with all of the features. We then trained a set of 11 models in which we removed a single feature as well as 11 models in which we had only one feature enabled. Even though this is not as complete as a running full feature selection, it will hopefully hint at the most useful features.
+Overall we trained a total of 23 models using the entire data set. One model was trained with all of the features. We then trained a set of 11 models in which we removed a single feature as well as 11 models in which we had only one feature enabled. Even  though this is not as complete as a running full feature selection, it will hopefully hint at the most useful features.
+
+Recall that each model contains three different classifiers: libsvm, liblinear, and crfsuite. So, in total we attempted training 69 classifiers. Unfortunately, as discussed later in the paper, the libsvm classifiers took very long to train and most were not finished in time. Consequently, their results are not included in this report. Fortunately we were able to train a single libsvm classifier from a model that had all of the features enabled.  So, all in all the results include the output from 47 classifiers (46 liblinear and crfsuite classifiers and 1 libsvm classifier).
 
 \subsection{Runtime Performance}
 
-How long each model took to train and how fast we can predict. Also discussion the hardware that was used to train and predict in terms of CPU speed, memory, etc.
+We deployed the system on a machine running Ubuntu 11.10 with a QuadCore AMD Opteron processor running a 2.5Ghz and 48GB of ram.
+
+In general training the liblinear and crfsuite classifiers was pretty quick. Each took around an hour to train on the entire training set. However, the libsvm classifier took approximate 6 hours to train on the same data.
+
+In terms of predicting labels for unseen input, all classifiers performed equally well. They each took around 1 hour to label the entire test data set. However, the vast major of time was spent computing features on the input rather than actually running the classifiers.
 
 \subsection{Classification Performance}
 
-A table of a bunch of awesome results. We should present results by model type (SVM, CRF, LIN) and feature set.
+\begin{figure}[t]
+\begin{center}
+	\begin{tabular}{|l|l|l|l|}
+	\hline
+	\multicolumn{4}{|c|}{\bf crfsuite} \\ \hline
+	{\bf Label} & {\bf Precision} & {\bf Recall} & {\bf F1} \\ \hline
+	
+test & 0.8650 &	0.6857 &	0.7650 \\ \hline
+problem & 0.7686 &	0.7492	& 0.7587 \\ \hline
+none & 0.9321 & 	0.9637 &	0.9477 \\ \hline
+treatment  & 0.7911 &	0.6763 &	0.7292 \\ \hline
+	
+	\hline
+	Average: & 0.7512 &	 0.8537 &	0.7891 \\
+	\hline
+	\end{tabular}
+\end{center}
+
+
+\begin{center}
+	\begin{tabular}{|l|l|l|l|}
+	\hline
+	\multicolumn{4}{|c|}{\bf liblinear} \\ \hline
+	{\bf Label} & {\bf Precision} & {\bf Recall} & {\bf F1} \\ \hline
+
+test  & 0.7908 & 0.8347 & 	0.8122 \\ \hline
+problem  & 0.5615 & 	0.9246 &	0.6987 \\ \hline
+none  & 0.9784	& 0.8646 &	0.9180 \\ \hline
+treatment  & 0.6740 &	0.7908	& 0.7278 \\ \hline
+
+	\hline
+	Average: & 0.8392 &	 0.7687  &	0.8001 \\
+	\hline
+	\end{tabular}
+\end{center}
+	
+	
+	
+		
+\begin{center}	
+	\begin{tabular}{|l|l|l|l|}
+	\hline
+	\multicolumn{4}{|c|}{\bf libsvm} \\ \hline
+	{\bf Label} & {\bf Precision} & {\bf Recall} & {\bf F1} \\ \hline
+
+     test & 0.8491 &	0.7392	& 0.7903 \\ \hline
+  problem & 0.7603 &	0.7692 &	0.7647 \\ \hline
+     none & 0.9395	 & 0.9668	& 0.9529 \\ \hline
+treatment & 0.8289 &	0.6365 &	0.7201\\ \hline
+
+	\hline
+	Averages: & 0.8444 &	 0.7779  & 	0.8070 \\
+	\hline
+	\end{tabular}
+\end{center}
+
+\caption{Results from a model trained on all of the test data with all of the features enabled.}
+\label{fig:all_features_results}
+\end{figure}
+
+
+\begin{figure}
+\begin{center}
+
+
+
+	\begin{tabular}{|l|l|l|}
+	\hline
+	{\bf Feature Set} & {\bf Classifier} & {\bf F1 Score}  \\ \hline
+	All except ``line'' &  crfsuite &  0.0765  \\ \hline
+	
+	
+	
+	
+
+	\end{tabular}
+
+
+
+	
+\end{center}
+\caption{A summary of the F1-scores from many different models with different features enabled.}
+\label{fig:summary_f1_scores}
+\end{figure}
+
+Overall we found that our system did a good job at predicting labels for medical notes. Figure~\ref{fig:all_features_results} shows summary statistics as well as a confusion matrix of a model that was trained with all the features enabled. The results are broken down so we can see the relative performance of each of the individual classifiers. Overall, the system does very well and achieves an average F1-score of {\bf 0.79}.
+
+As mentioned before, we trained a total of 47 classifiers with different features to get an idea for what features were the most important. A summary of the F1-scores of these classifiers is show in Figure~\ref{fig:summary_f1_scores}.
 
 \section{Discussion}
 
@@ -346,13 +476,13 @@ Be sure to include examples of cool cases where it caught a difficult label
 Be sure to include FAILURE cases
 
 
-We stopped using libSVMs.
+We stopped using libsvms.
 
 
 \section{Conclusion and Future Work}
 
 
-Found that libSVM was not worth while to use
+Found that libsvm was not worth while to use
 
 \subsection{Dimension Collapse}
 
@@ -363,11 +493,12 @@ Found that libSVM was not worth while to use
 \subsection{More Data}
 
 It goes without saying that having more data is always nice. This is particularly true in our case because we were training on a relatively small data set and testing on a much larger one. In fact, an interesting avenue for future work is to switch our training and testing data sets so we are training on relatively larger data set.
-
+	
 \section{Acknowledgments}
 
 We sincerely thank Dr. Robert Berwick  and Geza Kovacs
-for their guidance, help, and support.
+for their guidance, help, and support. May the Force be with you,
+always.
 
 
 %%%% May the Flow (Max-Flow, that is) be with you all.
