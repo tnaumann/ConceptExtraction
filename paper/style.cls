@@ -689,6 +689,7 @@
   \def\huge{\@setsize\huge{25\p@}\xxpt\@xxpt}
   \def\Huge{\@setsize\Huge{30\p@}\xxvpt\@xxvpt}
 \fi
+%\renewcommand{\normalsize}{\fontsize{10}{12}\selectfont}
 \normalsize
 
 % make aubox hsize/number of authors up to 3, less gutter
