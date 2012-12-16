@@ -72,10 +72,12 @@ Support vector machines (SVMs) aim to maximize the margin between decision hyper
 
 Often problem sets are not linearly separable in feature space. To overcome this challenge, SVMs often map the original feature space into a higher-dimensional space--the specific mapping defined by a kernel function, which is chosen for efficiency based on the specific classification problem. Separating hyperplanes, which are defined as vectors, can then be chosen as linear combinations of feature vectors in the training set.
 
-\subsubsection{Linear SVMs}
-There are some large data for which with/without nonlinear mappings gives similar performances. Without using kernels, one can quickly train a much larger set via a linear classifier. 
+We tested a non-linear SVM as provided by the open-source library, LibSVM \cite{libsvm}.
 
-Clarification: liblinear is not doing linear regression, the default is L2-regularized SVM solver using L2-loss SVC in the dual.
+\subsubsection{Linear SVMs}
+As mentioned previously, we cannot always expect linearly separable training data. However, for large enough data sets, linear SVMs and SVMs with nonlinear mappings yield similar performance. By eliminating the need for a kernel mapping, training becomes much less costly through use of a linear support vector machine. 
+
+We additionally tested a strictly linear SVM using the open-source library, LibLinear \cite{liblinear}, which provides an L2-loss linear SVM solver.
 
 \subsubsection{Conditional Random Fields}
 
