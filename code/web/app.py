@@ -36,6 +36,7 @@ def index():
 				}
 				items.append((json.dumps(properties), name + " - " + type.upper()))
 
+	items = sorted(items)
 	return render_template("form.html", models = items)
 
 @app.route('/process', methods=['POST', 'GET'])
