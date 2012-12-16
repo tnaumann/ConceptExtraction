@@ -125,24 +125,18 @@ In order to capture some general characteristics of each word we included a set 
 
 
 \subsubsection{Porter Stemmer}
-We already discussed the benefits of using entire words as features, but similar words come in many different forms. Motivated by generalization, we chose to use word stems as features and approached this feature extraction using three different stemming algorithms--two at the word-level and one at the sentence level (See 5.3.2). Namely, we used the Porter Stemming Algorithm, as developed by Martin Porter. 
+We already discussed the benefits of using entire words as features, but similar words come in many different forms. Motivated by generalization, we chose to use word stems as features and approached this feature extraction using three different stemming algorithms--two at the word-level and one at the sentence level (See 5.3.2). The addition of word stem features to our system improved our testing CRF F1 scores from 0.58 to 0.82.
 
-TODO(SAM):
-
-Our CRF F1 scores went from 0.58 to 0.82
+Namely, we used the Porter Stemming Algorithm, as developed by Martin Porter.  This particular stemming algorithm is divided into a number of linear steps. Word letters are first replaced by symbols for vowels, V and consonants, C. The measure, m, of the word is computed as the number of repetitions of the pattern VC, and this is used to determine whether suffixes ought to be removed. Plural word forms, such as  sses $\rightarrow$ ss and removal of trailing s's, are then removed; followed by the removal of past participles; and finally terminal y's are replaced with i's. Subsequent steps handle different orderings of suffices by translating double suffices into a single suffix and then removing suffices under certain predefined conditions.
 
 \subsubsection{Lancaster Stemmer}
 
-TODO(SAM):
+Derived from the Porter Stemmer, the Lancaster Stemmer was used to provide a second word stem feature to our system. By constant, this stemming algorithm uses a table of rules that specific the removal or replacement of an ending. Endings are replaced to maintain properly-spelled words throughout the stemming process--this avoids the need for an additional recoding or partial matching phase. 
+
+The rule table looks for the following information about each word: Endings of one or more characters (stored in reverse order); an optional intact flag; a digit specifying the removal total;  an optional append string of one or more characters;  and a continuation symbol. The stemmer first inspects the final letter of a term and considers the first relevant rule in the table. If the rule conditions are not satisfied, another rule is considered, otherwise the rule is applied and the ending is removed or reformed. This process is repeated until a termination symbol is uncovered and the word is presumed to be in its stem form.
 
 \subsubsection{Word Shape}
-In the same spirit of our word length and MIT RegEx features, we decided to look at the high-level shapes of individual words for better generalization. More specifically, we encode words into new strings that give a sense of their capitalization and punctuation patterns as well as approximate length. We tested a variety of open-sourced word shape classification methods including two methods written by Dan Klein, one of which simply classifies words as numeric, strictly upper or lower cased, or mixed, and a second, more fine-grained classifier that attempts to group words into equivalence classes by collapsing sequences of the same time. Additionally classifiers developed by Christopher Manning seek to make less distinctions mid-sequence by sorting words based on length. Each word shape classifier result added an additional dimension to our feature space. By naively including all word shape alternatives as features, we were able to improve our testbed CRF F1 score from 0.82 to 0.85. After further testing, we settled on \begin{verbatim}______\end{verbatim} as the most promising word shape metric because \begin{verbatim}______\end{verbatim}.
-\begin{verbatim}
-  ()_()
- ( ' ' )
-   >.<
- (")_(")
-\end{verbatim}
+In the same spirit of our word length and MIT RegEx features, we decided to look at the high-level shapes of individual words for better generalization. More specifically, we encode words into new strings that give a sense of their capitalization and punctuation patterns as well as approximate length. We tested a variety of open-sourced word shape classification methods including two methods written by Dan Klein, one of which simply classifies words as numeric, strictly upper or lower cased, or mixed, and a second, more fine-grained classifier that attempts to group words into equivalence classes by collapsing sequences of the same time. Additionally classifiers developed by Christopher Manning seek to make less distinctions mid-sequence by sorting words based on length. Each word shape classifier result added an additional dimension to our feature space. By naively including all word shape alternatives as features, we were able to improve our testbed CRF F1 score from 0.82 to 0.85. After further testing, we settled on \begin{verbatim}______\end{verbatim} as the most promising word shape metric because \begin{verbatim}______.\end{verbatim}
 
 \subsubsection{Additional Feature Considerations}
 The word-level features that we ultimately decided to include in system were chosen based on performance gain, but many others were explored in testing. These features were selected after close examination of our training data, and are worthy of discussion. It is possible, of course, that there is a more optimal feature set than our final choice that includes the features listed below:
@@ -170,7 +164,7 @@ Even though the primary goal of our system is to tag concepts at the word level,
 A fruitful strategy for any concept extractor is to first tag words with labels indicating their Part of Speech in context. In our case, for example, whether an ambiguous term is used as an adjective versus a noun could distinguish it as part of a test rather than a problem. We used the NTLK max entropy Part of Speech Tagger, which is trained on the Penn TreeBank to tag individual sentences. We then iterate over the returned tags and add these as word-level features, adding another dimension to our feature set for each Part of Speech tag.
 
 \subsubsection{WordNet Lemmatizer}
-TODO(SAM):
+Unlike the Porter Stemmer and the Lancaster Stemmer, which consider words independent of context, the WordNet Lemmatizer requires words to be processed at the sentence level in order to extract their root form. The WordNet Lemmatizer uses the part of speech tags for individual words, which are assign via NLTK as previously mentioned, in conjunction with a subset of tags used for morphology to extract stems from each word. WordNet references a database of word stems, and uses two types of processes to try to convert input strings into a form present in the database. A list of inflectional endings based on the word's syntactic tag is referenced in search of a match that can be detached from the word. An exception list is also referenced in search for an inflected form. WordNet first checks for exceptions and then uses rules for detachment to transform the word--after each transformation the result is referenced against the stem database until a match is eventually found.
 
 \subsubsection{Formatted Text}
 When reading through our training data, we noticed that test results are written in a variety of distinct forms that clearly separate these terms from problem or treatment terms. Since test result forms often spent multiple words such was "O2 sat -- 98\%" or "screen was positive". We wrote a series of regular expressions to capture these patterns with the test term as the first term in the sequence. We iterate over each word in the sentence and run our RegEx suite on the inclusive righthand sequence starting from that word. This feature adds only one additional dimension, and improved our CRF F1 test score from .85 to .90 by boosting our test term detection appreciably.
@@ -246,38 +240,7 @@ As mentioned previously, the framework's model class has support for training va
 
 \subsubsection{Data Organization and Directory Structure}
 
-The framework supports a default conventional directory structure to know where to store test, training, and prediction data. This simplifies training new models and testing how well they perform. While these directories can be configured, the defaults are:
-
-\begin{itemize}
-
-\item {\tt data } -  Contains all of the data that is used for training and large testing runs. Again, this is just conventional and it is possible to train and predict on data that is not in this directory. For example, we are able to predict ``one-off-sentences'' as a command-line argument.
-
-\item {\tt data/<data-set-name>/txt } - Contains the raws tokenized text files.
-
-\item {\tt data/<data-set-name>/concept } - Contains the labels that correspond to each of the tokenized files in the ``txt'' directory.
-
-\item {\tt models} - Contains all of the trained models.
-
-\item {\tt models/<model-name>} - Contains the meta data specific to each model that was trained. The framework saves the model's internal state (the features used, the input test set, etc.) as well as the trained parameters for the libSVM, crfsuite, and libLinear classifiers. This information is used to deserialize and load a model at runtime for prediction tasks.
-
-\item {\tt models/<model-name>/predictions/} - Contains output files with the predicted label for each word in the input file.
-
-\end{itemize}
-
 \subsubsection{Command-line Utilities}
-
-The framework contains three useful command line utilities to interact with the system. The functionality provided by these utilities are also exposed by a Python API so other developers can interact with the system natively in their own Python scripts without having to fork calls to the command line. 
-
-\begin{itemize}
-
-\item {\tt train.py } -  Trains a model using the specified training data and output model name.
-
-\item {\tt predict.py } -  Predict the labels for the specified input files and write the labels to a designated file.
-
-\item {\tt evaluate.py } -  Compare the predicted labels to the gold standard labels and print outs the confusion matrix, precision, recall, and F1-scores. 
-
-\end{itemize}
-
 
 \subsection{Web Service}
 
