@@ -89,10 +89,10 @@ Many machine learning classifiers assume relatively balanced data with respect t
 \subsection{Amount of Data}
 As with many statistically-grounded projects, there is often only a limited amount of data available. Within the medical domain this holds particularly true due to the expertise (and subsequent cost) required to provide annotation and the inability to easily merge data from multiple sources -- either due to the differing formats in which it is stored/accessed or various legal restraints in place to protect patients.
 
-Such dearth of training data means that the amount of test data is often much larger than the amount of training data available. Consequently, it is even more difficult to obtain decent results if the models trained even moderately overfit the training data.
+Such dearth of training data means that the amount of test data is often much larger than the amount of training data available. Consequently, it is even more difficult to obtain decent results if the models trained even moderately overfit the training data -- a particular risk due to the sparse distribution of high dimensional items discussed previously.
 
 \subsection{Data Usage Agreements}
-TODO(SAM):
+In addition to limited availability of data, it is often difficult to obtain the data that is relevant. Even for ``open'' data sets such as those provided by the i2b2 National Center for Biomedical Computing, one must sign a data use agreement in order to maintain compliance with the U.S. Health Insurance and Accountability Act (HIPAA) privacy and security rules. The approval process for ``open'' data sets can still take weeks, while access to more controlled data sets can often take months and require security measures such as single physical machine access.
 
 \section{Design}
 

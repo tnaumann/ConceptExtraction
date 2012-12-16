@@ -89,7 +89,7 @@ def main():
 		print >>args.output, "================"
 		print >>args.output, ""
 		print >>args.output, "Confusion Matrix"
-		pad = max(len(l) for l in labels)
+		pad = max(len(l) for l in labels) + 6
 		print >>args.output, "%s %s" % (' ' * pad, "\t".join(Model.labels.keys()))
 		for act, act_v in labels.items():
 			print >>args.output, "%s %s" % (act.rjust(pad), "\t".join([str(confusion[act_v][pre_v]) for pre, pre_v in labels.items()]))
@@ -123,7 +123,7 @@ def main():
 			recall += [float(tp) / (tp + fn + 1e-100)]
 			specificity += [float(tn) / (tn + fp + 1e-100)]
 			f1 += [float(2 * tp) / (2 * tp + fp + fn + 1e-100)]
-			print >>args.output, "%s %.4f\t%.4f\t%.4f" % (lab.rjust(pad), precision[-1], recall[-1], f1[-1])
+			print >>args.output, "%s %.4f\t%.4f\t%.4f\t%.4f" % (lab.rjust(pad), precision[-1], recall[-1], specificity[-1], f1[-1])
 
 		print >>args.output, "--------"
 
