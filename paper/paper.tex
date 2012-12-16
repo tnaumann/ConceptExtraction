@@ -269,7 +269,38 @@ As mentioned previously, the framework's model class has support for training va
 
 \subsubsection{Data Organization and Directory Structure}
 
+The framework supports a default conventional directory structure to know where to store test, training, and prediction data. This simplifies training new models and testing how well they perform. While these directories can be configured, the defaults are:
+
+\begin{itemize}
+
+\item {\tt data } -  Contains all of the data that is used for training and large testing runs. Again, this is just conventional and it is possible to train and predict on data that is not in this directory. For example, we are able to predict ``one-off-sentences'' as a command-line argument.
+
+\item {\tt data/<data-set-name>/txt } - Contains the raws tokenized text files.
+
+\item {\tt data/<data-set-name>/concept } - Contains the labels that correspond to each of the tokenized files in the ``txt'' directory.
+
+\item {\tt models} - Contains all of the trained models.
+
+\item {\tt models/<model-name>} - Contains the meta data specific to each model that was trained. The framework saves the model's internal state (the features used, the input test set, etc.) as well as the trained parameters for the libSVM, crfsuite, and libLinear classifiers. This information is used to deserialize and load a model at runtime for prediction tasks.
+
+\item {\tt models/<model-name>/predictions/} - Contains output files with the predicted label for each word in the input file.
+
+\end{itemize}
+
 \subsubsection{Command-line Utilities}
+
+The framework contains three useful command line utilities to interact with the system. The functionality provided by these utilities are also exposed by a Python API so other developers can interact with the system natively in their own Python scripts without having to fork calls to the command line. 
+
+\begin{itemize}
+
+\item {\tt train.py } -  Trains a model using the specified training data and output model name.
+
+\item {\tt predict.py } -  Predict the labels for the specified input files and write the labels to a designated file.
+
+\item {\tt evaluate.py } -  Compare the predicted labels to the gold standard labels and print outs the confusion matrix, precision, recall, and F1-scores. 
+
+\end{itemize}
+
 
 \subsection{Web Service}
 
