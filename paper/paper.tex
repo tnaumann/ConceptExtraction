@@ -232,7 +232,7 @@ The third and last format is is a sparse matrix format that is utilized by the v
 
 \subsubsection{Model Encapsulation and Serialization}
 
-Our framework includes a model class that can be trained on certain data with certain features enabled. The model class supports training a libSVM, libLinear, and CRF classifier that can be used for prediction in the future. One of the nice things, about the model class is that it can be serialized and reloaded dynamically. This is a really nice capability because it allows you to train a large number of models on various subsets of the data and using various different features to see which perform the best.
+Our framework includes a model class that can be trained on certain data with certain features enabled. The model class supports training a libsvm, liblinear, and crfsuite classifiers that can be used for prediction in the future. One of the nice things, about the model class is that it can be serialized and reloaded dynamically. This is a really nice capability because it allows you to train a large number of models on various subsets of the data and using various different features to see which perform the best.
 
 \subsubsection{Feature Computation}
 
@@ -240,7 +240,7 @@ The framework has a flexible and robust mechanism for computing features on inpu
 
 \subsubsection{Learning Algorithms}
 
-As mentioned previously, the framework's model class has support for training various classifiers: a Support Vector Machine, a CRF, and linear classifier. The implementation of these algorithms is delegates to various third-party libraries described below.
+As mentioned previously, the framework's model class has support for training various classifiers: a Support Vector Machine, a CRF, and L2-regularized Support Vector Machine. The implementation of these algorithms is delegates to various third-party libraries described below.
 
 \subsubsection{Data Organization and Directory Structure}
 
@@ -257,7 +257,7 @@ The framework supports a default conventional directory structure to know where 
 
 \item {\tt models} - Contains all of the trained models.
 
-\item {\tt models/<model-name>} - Contains the meta data specific to each model that was trained. The framework saves the model's internal state (the features used, the input test set, etc.) as well as the trained parameters for the libSVM, crfsuite, and libLinear classifiers. This information is used to deserialize and load a model at runtime for prediction tasks.
+\item {\tt models/<model-name>} - Contains the meta data specific to each model that was trained. The framework saves the model's internal state (the features used, the input test set, etc.) as well as the trained parameters for the libsvm, crfsuite, and liblinear classifiers. This information is used to deserialize and load a model at runtime for prediction tasks.
 
 \item {\tt models/<model-name>/predictions/} - Contains output files with the predicted label for each word in the input file.
 
@@ -305,9 +305,9 @@ Our code leveraged various 3rd party libraries for training the models and gener
 
 \item {\tt libsvm} \cite{libsvm}: libsvm provides a fast implementation of Support Vector Machines. It includes a command line utility that takes a training data (with all of the features formatted in a sparse matrix representation) as input and outputs a SVM model trained on that data. It also includes a command line utility that allows users to specify a desired model and predict the classes on new input. Our code base forks process calls to these utilities to train SVM models, although a lot of the parameter tuning and feature selection is handled elsewhere in our codebase.
 
-\item {\tt liblinear} \cite{liblinear}: lib linear is a linear classifier library that has special support multi-class classification. It also provides easy to use training and predicting command line utilities that accept a similar input format as libsvm.
+\item {\tt liblinear} \cite{liblinear}: liblinear is a linear classifier library that has special support multi-class classification. It also provides easy to use training and predicting command line utilities that accept a similar input format as libsvm.
 
-\item {\tt crfsuite} \cite{crfsuite}: crfsuite is an implementation for conditional random fields and includes command line front ends to train a model on data and to predict the labels on an unseen data set. The data format for the input training files is also a sparse matrix representation but is slightly different from the format used by libsvm and lib linear. Our codebase nicely abstracts out these format differences and produces the right format depending on the model in use.
+\item {\tt crfsuite} \cite{crfsuite}: crfsuite is an implementation for conditional random fields and includes command line front ends to train a model on data and to predict the labels on an unseen data set. The data format for the input training files is also a sparse matrix representation but is slightly different from the format used by libsvm and liblinear. Our codebase nicely abstracts out these format differences and produces the right format depending on the model in use.
 
 \item {\tt nltk} \cite{nltk}: nltk is a very popular NLP library written in Python. We leverage nltk to generate some of the features on our data. In particular, we utilize nltk's maximum-entropy part-of-speech tagging as well as many of its stemming algorithms.
 
@@ -357,7 +357,7 @@ We stopped using libSVMs.
 \section{Conclusion and Future Work}
 
 
-Found that libSVM was not worth while to use
+Found that libsvm was not worth while to use
 
 \subsection{Dimension Collapse}
 
@@ -368,7 +368,7 @@ Found that libSVM was not worth while to use
 \subsection{More Data}
 
 It goes without saying that having more data is always nice. This is particularly true in our case because we were training on a relatively small data set and testing on a much larger one. In fact, an interesting avenue for future work is to switch our training and testing data sets so we are training on relatively larger data set.
-
+	
 \section{Acknowledgments}
 
 We sincerely thank Dr. Robert Berwick  and Geza Kovacs
