@@ -306,9 +306,9 @@ The framework contains three useful command line utilities to interact with the 
 
 \subsection{Web Service}
 
-In addition to the various command line utilizes described in the previous section our system also includes a Web-based service that allows users to manually input a single sentence, select a model to use for prediction, and see the predicted labels that model generated for the input. Figure~\ref{fig:web_interface} shows a screenshot of the web application in use.
+In addition to the various command line utilizes described in the previous section, our system also includes a Web-based service that allows users to manually input a single sentence, select a model to use for prediction, and see the predicted labels that model generated for the input. Figure~\ref{fig:web_interface} shows a screenshot of the web application in use.
 
-The Web service was written in Python and directly interoperates with the rest of the code base. To run the Web applications simply execute the {\tt web.py} file in the source tree. The Web app allows you to label a sentence using any of the models that we have previously trained. This is useful for spot checking certain sentences and observing how different models behave. The Web app assumes that models have already been trained and placed into ``models'' directory in the source tree. By default, the application will host itself on port 5000. You can also see a live version of the Web service at:
+The Web service was written in Python and directly inter-operates with the rest of the code base. To run the Web applications simply execute the {\tt web.py} file in the source tree. The Web app allows you to label a sentence using any of the models that we have previously trained. This is useful for spot checking certain sentences and observing how different models behave. The Web app assumes that models have already been trained and placed into ``models'' directory in the source tree. By default, the application will host itself on port 5000. You can also see a live version of the Web service at:
 
 {\tt http://saahmad.media.mit.edu:5000/ }
 
@@ -336,7 +336,7 @@ Our code leveraged various 3rd party libraries for training the models and gener
 
 \item {\tt nltk} \cite{nltk}: nltk is a very popular NLP library written in Python. We leverage nltk to generate some of the features on our data. In particular, we utilize nltk's maximum-entropy part-of-speech tagging as well as many of its stemming algorithms.
 
-\item {\tt flask} \cite{flask}: Flask is a micro Web framework written in Python. It contains a small yet useful set of features that allow developers to easily setup RESTful Web backends and an elegant tempting system to gracefully generate HTML. Flask is used to build the Web service portion of the project.
+\item {\tt flask} \cite{flask}: Flask is a micro Web framework written in Python. It contains a small yet useful set of features that allow developers to easily setup RESTful Web backends and an elegant templating system to gracefully generate HTML. Flask is used to build the Web service portion of the project.
 
 \end{itemize}
 	
