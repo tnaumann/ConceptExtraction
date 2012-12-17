@@ -539,6 +539,8 @@ Likewise, we experimented with parameter selection for the SVM classifiers over 
 \subsection{More Data}
 
 It goes without saying that having more data is always nice. This is particularly true in our case because we were training on a relatively small data set and testing on a considerably larger one. In fact, an interesting avenue for future work is to switch our training and testing data sets so we are training on relatively larger data set.
+
+Additionally, the training data is derived from clinical notes originating at Beth Israel Deaconess and Partners Healthcare. It would be interesting to test our system against data from health centers outside the Boston area which have differently organized notes to see if our system is able to generalize well. Because many of our features avoided encoding language structure that appeared in the training data when possible, we expect this generalization would be relatively good assuming that the vocabulary used in an alternate test set was similar to our training set. However, this could very easily not be the case.
 	
 \section{Acknowledgments}
 
