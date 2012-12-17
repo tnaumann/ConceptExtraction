@@ -164,7 +164,7 @@ class Model:
 		return features_list
 
 	def features_for_word(self, word):
-		features = {}
+		features = {'dummy':1}	# always have >0 dimensions
 
 		for feature in Model.word_features:
 			if feature not in self.enabled_features:
