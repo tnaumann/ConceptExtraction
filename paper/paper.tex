@@ -112,6 +112,7 @@ Such dearth of training data means that the amount of test data is often much la
 In addition to limited availability of data, it is often difficult to obtain the data that is relevant. Even for ``open'' data sets such as those provided by the i2b2 National Center for Biomedical Computing, one must sign a data use agreement in order to maintain compliance with the U.S. Health Insurance and Accountability Act (HIPAA) privacy and security rules. The approval process for ``open'' data sets can still take weeks, while access to more controlled data sets can often take months and require security measures such as single physical machine access.
 
 \section{Design}
+This section describes the design of our system. Specifically, it details the classification task and the linguistic features our system utilizes in order to perform classification.
 
 \subsection{Data Flow \& Classification Task}
 Our system considers each document to be a stream of words grouped by sentences, and it attempts to provide the correct concept classification for each word. In order to identify the appropriate concept, our system considers natural language features for each document in successively broader contexts. Specifically, we first consider features using only the word itself as context, next we consider features which span the sentence, and last we consider n-gram features. In the sections that follow we discuss the linguistic features used in each context.
