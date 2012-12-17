@@ -80,6 +80,9 @@ As mentioned previously, we cannot always expect linearly separable training dat
 We additionally tested a strictly linear SVM using the open-source library, LibLinear \cite{liblinear}, which provides an L2-loss linear SVM solver.
 
 \subsubsection{Conditional Random Fields}
+Conditional random fields (CRF), unlike SVMs, is a probabilistic modeling method. The strength of CRF's in the case of classification for NLP is that it can take neighboring samples (i.e. context) into account when handling individual observations. A CRF is a type of undirected graphical model, which models a conditional probability distribution between observations and output values, which are represented as nodes. Given a sequence of words, this graph takes the form of a chain analogous to a Hidden Markov model. The conditional dependency of each output label on a given input is computed using a feature function in which features are given specific numerical weights and combine to determine the label's likelihood. 
+
+We tested our features using an open-source CRF library, CRFSuite \cite{crfsuite}, in addition to our SVMs.
 
 \section{Challenges}
 There are several unique challenges which arise due to the the nature of the dataset and the approach of leveraging traditional machine learning classifiers for natural language.
