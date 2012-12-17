@@ -381,7 +381,7 @@ This section discusses the data set, the models that were trained as part of the
 
 Deidentified clinical records used in this research were provided by the i2b2 National Center for Biomedical Computing funded by U54LM008748 and were originally prepared for the Shared Tasks for Challenges in NLP for Clinical Data organized by Dr. Ozlem Uzuner, i2b2 and SUNY. As mentioned before, the data came divided into training and test sets and every word was pre-labeled with the following classes: ``problem'', ``test'', ``treatment'', or ``none''. 
 
-The overall size of the data was 10mb and came from Boston-area hospitals and is subject to data use agreements. The training data consisted of 170 medical records and the test data consisted of 256 medical records. Further, the distribution over labels of the training and test sets is provided in Figure~\ref{fig:data_set_counts}.
+The overall size of the data was 10mb and came from Boston-area hospitals--so it is subject to data use agreements. The training data consisted of 170 medical records and the test data consisted of 256 medical records. Further, the distribution over labels of the training and test sets is provided in Figure~\ref{fig:data_set_counts}.
 
 
 
@@ -393,7 +393,7 @@ Recall that each model contains three different classifiers: libsvm, liblinear, 
 
 \subsection{Runtime Performance}
 
-We deployed the system on a machine running Ubuntu 11.10 with a QuadCore AMD Opteron processor running a 2.5Ghz and 48GB of ram.
+We deployed the system on a machine running Ubuntu 11.10 with a QuadCore AMD Opteron processor running a 2.5Ghz and 48GB of RAM.
 
 In general training the liblinear and crfsuite classifiers was pretty quick. Each took around an hour to train on the entire training set. However, the libsvm classifier took approximate 6 hours to train on the same data.
 
@@ -559,7 +559,7 @@ treatment & 0.8289 &	0.6365 &	0.7201\\ \hline
 \label{fig:summary_f1_scores}
 \end{figure*}
 
-Overall we found that our system did a good job at predicting labels for medical notes. Figure~\ref{fig:all_confusion_matrix} shows a confusion matrix of a model that was trained with all features enabled and Figure~\ref{fig:all_features_results} shows summary statistics for that very same model. The results are broken down so we can see the relative performance of each of the individual classifiers. Overall, the system does very well and achieves an average F1-score of {\bf 0.79}.
+Overall we found that our system did a good job at predicting labels for medical notes. Figure~\ref{fig:all_confusion_matrix} shows a confusion matrix of a model that was trained with all features enabled and Figure~\ref{fig:all_features_results} shows summary statistics for that very same model. The results are broken down so we can see the relative performance of each of the individual classifiers. Overall, the system does very well and achieves an average F1-score of about {\bf 0.80}.
 
 As mentioned before, we trained a total of 47 classifiers with different features to get an idea for what features were the most important. A summary of the F1-scores of these classifiers is show in Figure~\ref{fig:summary_f1_scores}.
 
