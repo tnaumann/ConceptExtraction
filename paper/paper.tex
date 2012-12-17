@@ -128,7 +128,7 @@ The most obvious property of each word is perhaps the word itself. Since there i
 \subsubsection{Length}
 The next most obvious property of each word is its length. Unlike using the word as a feature, there is a strict ordering over length and consequently the addition of this feature increases the dimension of the space by only $1$. While the linguistic merit of length as a feature can be debated in conventional natural language processing, we felt it would play a large role in medical language in order to distinguish treatments, tests, and problems from words without a concept. Intuitively this is because often times treatments in the form of medications consist of long medical names, as do some of the words in medically described problems and tests.
 
-\subsubsection{MIT Regular Expressions}
+\subsubsection{Regular Expressions}
 In order to capture some general characteristics of each word we included a set of regular expressions each of which adds a dimension to our classification. Such features help allow not only to pick up on traits within different medical categories--such as tests which are often abbreviated or contain numbers--but also to easily rule out non-medical terms such as days, phone numbers, etc. The characteristics we chose are as follows:
 \begin{itemize}
 \item {\tt INITCAP}: first letter is capitalized and alphabetic,
@@ -215,17 +215,9 @@ Likewise, we duplicate the subsequent word features, which are relabeled as $nex
 \label{fig:parameter_selection}
 \end{figure}
 
-\begin{itemize}
+Due to the data's bias with respect to labels which we previously discussed, the default SVM parameters failed to provide any sort of relevant results. Therefore, with our full feature set we used libsvm's included utilities to perform parameter selection as shown in Figure~\ref{fig:parameter_selection}. The utility performed $5$-fold cross validation and allowed us to see the parameters which provided the best accuracy. In turn, this enabled us to find an appropriate constant $C$ with which to scale the loss function and constant $\gamma$ for the radial basis function kernel the SVM was using.
 
-\item Grid search and grid search image
-
-\item Include that PNG image from easy.py
-
-\item Cross validation
-
-\end{itemize}
-
-
+It should be noted that the best method would be to optimize against the F1 score rather than the accuracy due to the data bias previously discussed. However, in practice, the parameters that were discovered using this method were able to dramatically improve performance while still being easy to obtain.
 
 
 \section{System}
