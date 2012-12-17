@@ -61,6 +61,8 @@ TODO(SAM):
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 \section{Background}
+This section discusses a limited selection of previous work in concept extraction as well as work done in machine learning that is leveraged in this project. 
+
 \subsection{Related Work}
 Concept extraction in medicine is an increasingly well-studied problem. One of the main driving forces behind such research is the annual i2b2/VA Workshop on Natural Language Processing Challenges for Clinical Records, which challenges participants to develop a system for "the extraction of medical concepts from patient reports." Torii et al. \cite{torii}, for example, developed a system using the same training data as us for the workshop. Their concept extraction system was trained using a tagger specifically developed for the biology domain, and their work shows the difficulty in porting trained systems across clinical documents from various sources. 
 
@@ -126,8 +128,8 @@ The most obvious property of each word is perhaps the word itself. Since there i
 \subsubsection{Length}
 The next most obvious property of each word is its length. Unlike using the word as a feature, there is a strict ordering over length and consequently the addition of this feature increases the dimension of the space by only $1$. While the linguistic merit of length as a feature can be debated in conventional natural language processing, we felt it would play a large role in medical language in order to distinguish treatments, tests, and problems from words without a concept. Intuitively this is because often times treatments in the form of medications consist of long medical names, as do some of the words in medically described problems and tests.
 
-\subsubsection{MIT Regular Expressions}
-In order to capture some general characteristics of each word we included a set of regular expressions each of which adds a dimension to our classification. Such features help not only to pick up on traits within different medical categories--such as tests which are often abbreviated or contain numbers--but also to easily rule out non-medical terms such as days, phone numbers, etc. The characteristics we chose are as follows:
+\subsubsection{Regular Expressions}
+In order to capture some general characteristics of each word we included a set of regular expressions each of which adds a dimension to our classification. Such features help allow not only to pick up on traits within different medical categories--such as tests which are often abbreviated or contain numbers--but also to easily rule out non-medical terms such as days, phone numbers, etc. The characteristics we chose are as follows:
 \begin{itemize}
 \item {\tt INITCAP}: first letter is capitalized and alphabetic,
 \item {\tt ALLCAPS}: entire word is capitalized and alphabetic,
@@ -213,20 +215,13 @@ Likewise, we duplicate the subsequent word features, which are relabeled as $nex
 \label{fig:parameter_selection}
 \end{figure}
 
-\begin{itemize}
+Due to the data's bias with respect to labels which we previously discussed, the default SVM parameters failed to provide any sort of relevant results. Therefore, with our full feature set we used libsvm's included utilities to perform parameter selection as shown in Figure~\ref{fig:parameter_selection}. The utility performed $5$-fold cross validation and allowed us to see the parameters which provided the best accuracy. In turn, this enabled us to find an appropriate constant $C$ with which to scale the loss function and constant $\gamma$ for the radial basis function kernel the SVM was using.
 
-\item Grid search and grid search image
-
-\item Include that PNG image from easy.py
-
-\item Cross validation
-
-\end{itemize}
-
-
+It should be noted that the best method would be to optimize against the F1 score rather than the accuracy due to the data bias previously discussed. However, in practice, the parameters that were discovered using this method were able to dramatically improve performance while still being easy to obtain.
 
 
 \section{System}
+This section discusses the framework code we have developed in order to perform concept extraction, the web service frontend which allows users to test the service without seeing any of the underlying data, and the machine learning libraries that are leveraged. 
 
 \subsection{Code Architecture}
 
@@ -340,6 +335,7 @@ Our code leveraged various 3rd party libraries for training the models and gener
 	
 
 \section{Results}
+This section discusses the data set, the models that were trained as part of the project, the (excessive) amount of time taken to train them, and the performance of those models on the test data.
 
 \subsection{Data Set}
 
@@ -513,9 +509,9 @@ We stopped using libsvms.
 
 
 \section{Conclusion and Future Work}
+While the libsvm-trained SVM was able to perform the best overall classification performance, the exorbitant time required to train makes it of little practical use. Both the liblinear-trained L2 regularized SVM and crfsuite-trained CRF provide comparable classification performance in extremely reduced training time, and roughly equal prediction time. In fact, the runtime difference was so great that we were able to begin enumerating the feature space with both the liblinear and crfsuite models well before the first libsvm classifier was trained.
 
-
-Found that libsvm was not worth while to use
+Across the board, we found F1 scores above what we had expected. And thus we believe this method of identifying linguistic features and then leveraging statistical techniques is successful. While we were able to develop several strong models, there were several additional ideas that piqued our interest which we must defer to future work for the sake of time.
 
 \subsection{Dimension Collapse}
 There are several mechanisms we thought of to to collapse the high dimensional nature of the data. Given unbounded time, we would have liked to try the following.
