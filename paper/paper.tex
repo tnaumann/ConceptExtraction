@@ -284,7 +284,7 @@ The framework supports a default conventional directory structure to know where 
 
 \item {\tt models/<model-name>} - Contains the meta data specific to each model that was trained. The framework saves the model's internal state (the features used, the input test set, etc.) as well as the trained parameters for the libsvm, crfsuite, and liblinear classifiers. This information is used to deserialize and load a model at runtime for prediction tasks.
 
-\item {\tt models/<model-name>/test_predictions/} - Contains output files with the predicted label for each word in the input file.
+\item {\tt models/<model-name>/test\_predictions/} - Contains output files with the predicted label for each word in the input file.
 
 \end{itemize}
 
@@ -565,11 +565,11 @@ As mentioned before, we trained a total of 47 classifiers with different feature
 
 \section{Discussion}
 
-As priorly mentioned, we tested our feature set using three classifiers in search of the best concept extraction system (general SVM, linear SVM, and CRF), all of which yielded comparable results in terms of their average F1 scores, but showed significant difference in terms of efficiency. Our less efficient classifier was eventually eliminated from our system, as discussed in the subsequent section. 
+As priorly mentioned, we tested our feature set using three classifiers in search of the best concept extraction system (general SVM, linear SVM, and CRF), all of which yielded comparable results in terms of their average F1 scores, but showed significant difference in terms of efficiency. Our least time efficient classifier, SVM, was eventually eliminated from our system, as discussed in the subsequent section. 
 
 After extensive testing of various subsets from our initial feature set, the most optimal combination we discovered was the inclusion of all features discussed in Section 4.2 less the previous word n-gram feature and the part of speech tags using a general SVM. The previous word feature was likely redundant in conjunction with the next word feature; likewise, the part of speech tags are reused in the WordNet Lemmatizer word stem feature. Certain features (metric units, word endings, prognosis locations, and flag words as discussed in Section 4.2.7) were eliminated before significant testing was performed as they proved to have an appreciable negative impact on our F1 scores when testing toy examples. 
 
-Our more extensive tests also revealed that our baseline F1 score is primarily a reflection of the inclusion of a single feature: the word itself.  In that sense, much of our performance can be credited purely to machine learning with one particularly strong feature. However, our additional improvements on this score required more in-depth linguistic analysis of our training data. Moreover, all of our machine learning algorithms showed comparable improvements with more language-driven features--these features show a measure of success that is independent from the chosen canned classifier. Nevertheless, we can always argue for a more eloquent implementation of our system in spite of our successful results.
+Our more extensive tests also revealed that our baseline F1 score is primarily a reflection of the inclusion of a single feature: the word itself.  In that sense, much of our performance can be credited purely to machine learning with one particularly strong feature. However, our additional improvements on this score required more in-depth linguistic analysis of our training data. Moreover, all of our machine learning algorithms showed comparable improvements with more language-driven features. Therefore, these features indicate a measure of success that is independent from the chosen canned classifier. Nevertheless, we can always argue for a more eloquent implementation of our system in spite of our successful results.
 
 \section{Conclusion and Future Work}
 While the libsvm-trained SVM was able to perform the best overall classification performance, the exorbitant time required to train makes it of little practical use. Both the liblinear-trained L2 regularized SVM and crfsuite-trained CRF provide comparable classification performance in extremely reduced training time, and roughly equal prediction time. In fact, the runtime difference was so great that we were able to begin enumerating the feature space with both the liblinear and crfsuite models well before the first libsvm classifier was trained.
@@ -580,14 +580,14 @@ Across the board, we found F1 scores above what we had expected. And thus we bel
 There are several mechanisms we thought of to to collapse the high dimensional nature of the data. Given unbounded time, we would have liked to try the following.
 
 \begin{itemize}
-\item First, we used stemming to add additional features to each word much in the same way that the word feature was created. However, after performing more complete feature selection we would have liked to select the best suited stemmer and used that in place of the word feature.
+\item First, we used stemming to add additional features to each word much in the same way that the word feature was created. However, after performing more complete feature selection we would have liked to select the best suited stemmer and use that in place of the word feature.
 
 \item Depending on the stemmer selected, we may have also added a list of stopwords that mapped to a single dimension in order to gain a dimension saving over ``uninteresting'' words.
 
 \item Next, we would have liked to investigate a dramatic reduction by creating a list of all words that are only tagged with the null concept class and mapped them all to a single dimension.
 \end{itemize}
 
-While the second approach exhibits only a modest reduction (and may be taken care of automatically by some stemmers), the first and third approaches may allow us to dramatically reduce the dimension of the problem. Our hypothesis is that this will certainly improve the runtime performance, and perhaps the classification performance as well.
+While the second approach exhibits only a modest reduction (and may be taken care of automatically by some stemmers), the first and third approaches may allow us to dramatically reduce the dimension of the problem. Our hypothesis is that this will certainly improve the runtime performance, and perhaps the classification performance and model generalization as well.
 
 \subsection{Feature Selection}
 In our work, we performed feature selection in-so-far as we thought of a large number of potential features and then tested their efficacy on a small subset of documents. Further, we generated models from the full set of features as well as each individual feature. While these proved effective for the purposes of analysis, a more exhaustive feature selection is certainly desirable. 
