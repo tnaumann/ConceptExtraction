@@ -453,12 +453,13 @@ treatment & 0.8289 &	0.6365 &	0.7201\\ \hline
 \label{fig:all_features_results}
 \end{figure}
 
-\begin{figure*}
+\begin{figure}
 
 \begin{center}
 	\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l||l|l|}
 	\hline
 	\multicolumn{11}{|c||}{\bf Feature Set} & \multicolumn{2}{|c|}{\bf F1 Score}	\\ \hline
+	% BEGIN COLUMN HEADERS
 		\begin{sideways} length \end{sideways} & 
 		\begin{sideways} mitre \end{sideways} & 
 		\begin{sideways} next \end{sideways} & 
@@ -470,7 +471,8 @@ treatment & 0.8289 &	0.6365 &	0.7201\\ \hline
 		\begin{sideways} test\_result \end{sideways} & 
 		\begin{sideways} word \end{sideways} & 
 		\begin{sideways} word\_shape \end{sideways} & 
-	LIN & CRF	\\ \hline
+		LIN & CRF	\\ \hline
+	% END COLUMN HEAERS
 
 	\checkmark & & & & & & & & & & & &	\\ \hline
 	& \checkmark & & & & & & & & & & &	\\ \hline
@@ -488,7 +490,7 @@ treatment & 0.8289 &	0.6365 &	0.7201\\ \hline
 \end{center}
 \caption{A summary of the F1-scores from many different models with different features enabled.}
 \label{fig:summary_f1_scores}
-\end{figure*}
+\end{figure}
 
 Overall we found that our system did a good job at predicting labels for medical notes. Figure~\ref{fig:all_features_results} shows summary statistics as well as a confusion matrix of a model that was trained with all the features enabled. The results are broken down so we can see the relative performance of each of the individual classifiers. Overall, the system does very well and achieves an average F1-score of {\bf 0.79}.
 
@@ -525,7 +527,7 @@ There are several mechanisms we thought of to to collapse the high dimensional n
 While the second approach exhibits only a modest reduction (and may be taken care of automatically by some stemmers), the first and third approaches may allow us to dramatically reduce the dimension of the problem. Our hypothesis is that this will certainly improve the runtime performance, and perhaps the classification performance as well.
 
 \subsection{Feature Selection}
-In our work, we performed feature selection in-so-far as we thought of a large number of potential features and then tested their efficacy on a small subset of documents. Further, we generated models from the full set of features as well as each individual feature, and the full set with one held out. While these proved effective for the purposes of analysis, a more exhaustive feature selection is certainly desirable. 
+In our work, we performed feature selection in-so-far as we thought of a large number of potential features and then tested their efficacy on a small subset of documents. Further, we generated models from the full set of features as well as each individual feature. While these proved effective for the purposes of analysis, a more exhaustive feature selection is certainly desirable. 
 
 \subsection{Parameter Selection}
 Likewise, we experimented with parameter selection for the SVM classifiers over a reduced data set and were able to obtain dramatic increases in classification performance. Due to the already long runtime of training SVM classifiers, it was not feasible to perform any sort of robust parameter selection for these models. However, we expect that doing so would provide additional gains.
