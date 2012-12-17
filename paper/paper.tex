@@ -61,6 +61,8 @@ TODO(SAM):
 Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 \section{Background}
+This section discusses a limited selection of previous work in concept extraction as well as work done in machine learning that is leveraged in this project. 
+
 \subsection{Related Work}
 Concept extraction in medicine is an increasingly well-studied problem. One of the main driving forces behind such research is the annual i2b2/VA Workshop on Natural Language Processing Challenges for Clinical Records, which challenges participants to develop a system for "the extraction of medical concepts from patient reports." Torii et al. \cite{torii}, for example, developed a system using the same training data as us for the workshop. Their concept extraction system was trained using a tagger specifically developed for the biology domain, and their work shows the difficulty in porting trained systems across clinical documents from various sources. 
 
@@ -227,6 +229,7 @@ Likewise, we duplicate the subsequent word features, which are relabeled as $nex
 
 
 \section{System}
+This section discusses the framework code we have developed in order to perform concept extraction, the web service frontend which allows users to test the service without seeing any of the underlying data, and the machine learning libraries that are leveraged. 
 
 \subsection{Code Architecture}
 
@@ -340,6 +343,7 @@ Our code leveraged various 3rd party libraries for training the models and gener
 	
 
 \section{Results}
+This section discusses the data set, the models that were trained as part of the project, the (excessive) amount of time taken to train them, and the performance of those models on the test data.
 
 \subsection{Data Set}
 
