@@ -517,9 +517,9 @@ We stopped using libsvms.
 
 
 \section{Conclusion and Future Work}
+While the libsvm-trained SVM was able to perform the best overall classification performance, the exorbitant time required to train makes it of little practical use. Both the liblinear-trained L2 regularized SVM and crfsuite-trained CRF provide comparable classification performance in extremely reduced training time, and roughly equal prediction time. In fact, the runtime difference was so great that we were able to begin enumerating the feature space with both the liblinear and crfsuite models well before the first libsvm classifier was trained.
 
-
-Found that libsvm was not worth while to use
+Across the board, we found F1 scores above what we had expected. And thus we believe this method of identifying linguistic features and then leveraging statistical techniques is successful. While we were able to develop several strong models, there were several additional ideas that piqued our interest which we must defer to future work for the sake of time.
 
 \subsection{Dimension Collapse}
 There are several mechanisms we thought of to to collapse the high dimensional nature of the data. Given unbounded time, we would have liked to try the following.
