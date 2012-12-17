@@ -458,8 +458,7 @@ treatment & 0.8289 &	0.6365 &	0.7201\\ \hline
 \label{fig:all_features_results}
 \end{figure}
 
-\begin{figure}
-
+\begin{figure*}
 \begin{center}
 	\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l||l|l|}
 	\hline
@@ -479,23 +478,23 @@ treatment & 0.8289 &	0.6365 &	0.7201\\ \hline
 		LIN & CRF	\\ \hline
 	% END COLUMN HEAERS
 
-	\checkmark & & & & & & & & & & & &	\\ \hline
-	& \checkmark & & & & & & & & & & &	\\ \hline
-	& & \checkmark & & & & & & & & & &	\\ \hline
-	& & & \checkmark & & & & & & & & &	\\ \hline
-	& & & & \checkmark & & & & & & & &	\\ \hline
-	& & & & & \checkmark & & & & & & &	\\ \hline
-	& & & & & & \checkmark & & & & & &	\\ \hline
-	& & & & & & & \checkmark & & & & &	\\ \hline
-	& & & & & & & & \checkmark & & & &	\\ \hline
-	& & & & & & & & & \checkmark & & &	\\ \hline
-	& & & & & & & & & & \checkmark & &	\\ \hline
+	\checkmark & & & & & & & & & & & 0.2157 & 0.0420	\\ \hline
+	& \checkmark & & & & & & & & & & 0.2155 & 0.0927	\\ \hline
+	& & \checkmark & & & & & & & & & 0.2155 & 0.0572	\\ \hline
+	& & & \checkmark & & & & & & & & 0.2155 & 0.0820	\\ \hline
+	& & & & \checkmark & & & & & & & 0.2155 & 0.0366	\\ \hline
+	& & & & & \checkmark & & & & & & 0.7085 & 0.2878	\\ \hline
+	& & & & & & \checkmark & & & & & 0.7266 & 0.2886	\\ \hline
+	& & & & & & & \checkmark & & & & 0.7309 & 0.2857	\\ \hline
+	& & & & & & & & \checkmark & & & 0.2806 & 0.1084	\\ \hline
+	& & & & & & & & & \checkmark & & 0.7332 & 0.2753	\\ \hline
+	& & & & & & & & & & \checkmark & 0.2431 & 0.1244	\\ \hline
 
 \end{tabular}
 \end{center}
 \caption{A summary of the F1-scores from many different models with different features enabled.}
 \label{fig:summary_f1_scores}
-\end{figure}
+\end{figure*}
 
 Overall we found that our system did a good job at predicting labels for medical notes. Figure~\ref{fig:all_features_results} shows summary statistics as well as a confusion matrix of a model that was trained with all the features enabled. The results are broken down so we can see the relative performance of each of the individual classifiers. Overall, the system does very well and achieves an average F1-score of {\bf 0.79}.
 
