@@ -10,7 +10,7 @@ from subprocess import *
 from model import Model
 
 # Parameterization
-n = 0
+n = 1
 _TEST = False
 
 ###############################################################################
@@ -56,13 +56,17 @@ def execute(commands, sleep=1):
 		p = Popen(cmd)
 		ps.append(p)
 	print "Done"
-	 
+	
+	was_finished = -1
 	while True:
 		ps_status = [p.poll() for p in ps]
-		print "\tCompleted: %d/%d\r" % (len(ps_status) - ps_status.count(None), len(ps_status)),
-		sys.stdout.flush()
-		if all(x is not None for x in ps_status):
-			break
+		now_finished = len(ps_status) - ps_status.count(None)
+		if now_finished > was_finished:
+			print "\tCompleted: %d/%d\r" % (now_finished, len(ps_status)),
+			sys.stdout.flush()
+			if now_finished == len(ps_status):
+				break
+		was_finished = now_finished
 		time.sleep(sleep)
 
 ###############################################################################
@@ -71,6 +75,8 @@ def execute(commands, sleep=1):
 def train(cmd_features):
 	modelname = os.path.join(model_path, "-".join(cmd_features), "model")
 	cmd = ["python", our_train, "-m", modelname]
+	cmd += ["--no-svm"]
+	cmd += ["-e"] + [f for f in cmd_features if f != 'X']
 	if _TEST:
 		cmd += ["-t", os.path.join(data_path, "concept_assertion_relation_training_data", "merged", "txt", "record-105.txt")]
 		cmd += ["-c", os.path.join(data_path, "concept_assertion_relation_training_data", "merged", "concept", "record-105.con")]
